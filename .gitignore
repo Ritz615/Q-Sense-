@@ -1,0 +1,53 @@
+# Q-Sense
+
+## Byte Offsets — Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+
+## Python virtual environments
+.venv/
+venv/
+env/
+*.egg-info/
+
+## Database files
+*.db
+*.sqlite
+*.sqlite3
+
+## Environment config (never commit secrets)
+.env
+.env.*
+!.env.example
+
+## ML model artifacts
+backend/ml/models/**/*.pkl
+backend/ml/models/**/*.pt
+backend/ml/data/**
+!backend/ml/data/.gitkeep
+!backend/ml/models/.gitkeep
+
+## Frontend build artifacts
+frontend/dist/
+frontend/node_modules/
+frontend/.vite/
+
+## IDE / OS
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
+
+## Logs
+*.log
+
+## Test coverage
+htmlcov/
+.coverage
+.pytest_cache/
+
+## Docker volumes
+postgres_data/
