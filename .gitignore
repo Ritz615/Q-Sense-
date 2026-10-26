@@ -53,3 +53,6 @@ htmlcov/
 
 ## Docker volumes
 postgres_data/
+
+## Prompts & Local Instructions
+master_prompt*.txt
