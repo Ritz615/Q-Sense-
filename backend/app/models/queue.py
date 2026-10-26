@@ -57,3 +57,22 @@ class QueueEvent(Base):
     timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
     payload: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     source: Mapped[str] = mapped_column(String(32), default="simulation")
+
+
+class CameraSource(Base):
+    """Configured video camera or feed source for computer-vision queue occupancy monitoring."""
+    __tablename__ = "camera_sources"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    department_id: Mapped[int] = mapped_column(ForeignKey("departments.id"), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(128), nullable=False)
+    stream_source: Mapped[str] = mapped_column(String(256), default="synthetic")  # 0, rtsp url, file path, synthetic
+    roi_normalized: Mapped[Optional[list]] = mapped_column(JSON, default=lambda: [0.1, 0.35, 0.9, 0.95])
+    status: Mapped[str] = mapped_column(String(32), default="synthetic")  # online, offline, degraded, synthetic
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    last_occupancy: Mapped[int] = mapped_column(Integer, default=0)
+    last_seen_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+    )

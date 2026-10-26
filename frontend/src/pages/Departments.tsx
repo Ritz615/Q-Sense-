@@ -135,7 +135,7 @@ export default function Departments() {
                       <input className="input w-20 py-1 text-sm" type="number" value={editData.max_counters ?? d.max_counters} onChange={e => setEditData({...editData, max_counters: Number(e.target.value)})} />
                     ) : d.max_counters}
                   </td>
-                  <td className="table-cell"><StatusBadge status={d.is_active ? 'open' : 'closed'} /></td>
+                  <td className="table-cell"><StatusBadge status={d.is_active ? 'active' : 'inactive'} label={d.is_active ? 'Active' : 'Inactive'} /></td>
                   <td className="table-cell">
                     {editId === d.id ? (
                       <div className="flex gap-1">

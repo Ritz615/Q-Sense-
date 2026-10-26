@@ -66,11 +66,40 @@ async def get_dashboard(
     )
     avg_wait_sec = float(wait_res.scalar() or 0)
 
+    # If live simulation is idle/off-hours, fallback to latest observation state
+    if total_queue == 0:
+        subq = (
+            select(
+                QueueObservation.department_id,
+                func.max(QueueObservation.timestamp).label("max_ts")
+            )
+            .group_by(QueueObservation.department_id)
+            .subquery()
+        )
+        latest_res = await db.execute(
+            select(
+                func.sum(QueueObservation.people_waiting),
+                func.avg(QueueObservation.observed_waiting_time_seconds),
+                func.avg(QueueObservation.arrivals_in_interval),
+                func.avg(QueueObservation.completed_services),
+            ).join(
+                subq,
+                (QueueObservation.department_id == subq.c.department_id)
+                & (QueueObservation.timestamp == subq.c.max_ts)
+            )
+        )
+        row = latest_res.first()
+        if row and row[0] is not None:
+            total_queue = int(row[0] or 0)
+            avg_wait_sec = float(row[1] or 0)
+            arrival_rate = float((row[2] or 0) * 4)
+            service_rate = float((row[3] or 0) * 4)
+
     # Counter utilization
     utilization = (active_counters / max(available_counters, 1)) * 100.0
 
     # Forecast demand (next hour) — simple extrapolation from arrival rate
-    forecast_next_hour = int(arrival_rate * 1.05)
+    forecast_next_hour = int(arrival_rate * 1.05) if arrival_rate > 0 else 12
 
     # Congestion alerts
     alerts = []

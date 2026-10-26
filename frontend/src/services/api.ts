@@ -179,6 +179,19 @@ export const explainApi = {
   predictionContext: (deptId: number) => api.get(`/explain/prediction-context/${deptId}`),
 };
 
+// ─── Camera ───────────────────────────────────────────────────────────────
+
+export const cameraApi = {
+  status: () => api.get('/camera/status'),
+  listSources: (department_id?: number) =>
+    api.get('/camera/sources', { params: department_id ? { department_id } : {} }),
+  getSource: (id: number) => api.get(`/camera/sources/${id}`),
+  createSource: (data: any) => api.post('/camera/sources', data),
+  updateSource: (id: number, data: any) => api.patch(`/camera/sources/${id}`, data),
+  stepFrame: (id: number) => api.post(`/camera/sources/${id}/step`),
+  snapshotUrl: (id: number) => `${BASE_URL}/camera/sources/${id}/snapshot?t=${Date.now()}`,
+};
+
 // ─── Audit ────────────────────────────────────────────────────────────────
 
 export const auditApi = {

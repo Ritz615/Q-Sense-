@@ -34,6 +34,11 @@ export default function Simulation() {
       const [rRes, dRes] = await Promise.all([simulationApi.listRuns(), departmentsApi.list()])
       setRuns(rRes.data)
       setDepartments(dRes.data)
+      const completed = rRes.data.find((r: any) => r.status === 'completed')
+      if (completed && !selectedRun) {
+        setSelectedRun(completed.id)
+        loadResults(completed.id)
+      }
     } catch { setError('Failed to load runs') }
     finally { setLoading(false) }
   }

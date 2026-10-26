@@ -110,12 +110,10 @@ async def prediction_context(
     from app.models.queue import QueueObservation
     from sqlalchemy import func
 
-    now = datetime.now(timezone.utc)
     recent = await db.execute(
         select(QueueObservation)
         .where(
             QueueObservation.department_id == department_id,
-            QueueObservation.timestamp >= now - timedelta(hours=1),
         )
         .order_by(desc(QueueObservation.timestamp))
         .limit(8)
@@ -131,7 +129,7 @@ async def prediction_context(
     trend_dir = "growing" if trend > 0 else ("shrinking" if trend < 0 else "stable")
 
     narrative = (
-        f"Over the last {len(obs) * 15} minutes, the queue for department {department_id} "
+        f"Over the last {len(obs) * 15} minutes of observations, the queue for department {department_id} "
         f"has been {trend_dir} (from {oldest.people_waiting} to {latest.people_waiting} people). "
         f"Current active counters: {latest.active_counters}. "
         f"Recent arrival rate: ~{latest.arrivals_in_interval} per 15-min interval. "

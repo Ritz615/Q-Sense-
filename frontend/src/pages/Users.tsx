@@ -137,7 +137,7 @@ export default function UsersPage() {
                       {u.role}
                     </span>
                   </td>
-                  <td className="table-cell"><StatusBadge status={u.is_active ? 'open' : 'closed'} /></td>
+                  <td className="table-cell"><StatusBadge status={u.is_active ? 'active' : 'inactive'} label={u.is_active ? 'Active' : 'Inactive'} /></td>
                   <td className="table-cell">
                     {u.id !== currentUser?.id && (
                       <button

@@ -1,0 +1,355 @@
+{
+  "timestamp": "2026-10-26T18:02:58.736770+00:00",
+  "primary_benchmark": {
+    "fixed": {
+      "strategy": "fixed",
+      "mean_wait_avg_seconds": 7987.9,
+      "mean_wait_std_seconds": 472.0,
+      "p90_wait_avg_seconds": 15264.0,
+      "counter_utilization_avg": 0.998,
+      "throughput_avg": 22.4,
+      "service_level_avg": 8.5,
+      "num_trials": 5,
+      "individual_runs": [
+        {
+          "strategy": "fixed",
+          "mean_wait_seconds": 8571.6,
+          "median_wait_seconds": 8340.0,
+          "p90_wait_seconds": 16014.0,
+          "max_queue_length": 221,
+          "customers_served": 178,
+          "total_arrivals": 399,
+          "throughput_per_hour": 22.2,
+          "counter_utilization": 0.999,
+          "service_level_attained": 5.6
+        },
+        {
+          "strategy": "fixed",
+          "mean_wait_seconds": 7741.3,
+          "median_wait_seconds": 7380.0,
+          "p90_wait_seconds": 14220.0,
+          "max_queue_length": 176,
+          "customers_served": 181,
+          "total_arrivals": 357,
+          "throughput_per_hour": 22.6,
+          "counter_utilization": 0.995,
+          "service_level_attained": 6.1
+        },
+        {
+          "strategy": "fixed",
+          "mean_wait_seconds": 8196.6,
+          "median_wait_seconds": 8040.0,
+          "p90_wait_seconds": 15642.0,
+          "max_queue_length": 197,
+          "customers_served": 182,
+          "total_arrivals": 378,
+          "throughput_per_hour": 22.8,
+          "counter_utilization": 1.0,
+          "service_level_attained": 11.0
+        },
+        {
+          "strategy": "fixed",
+          "mean_wait_seconds": 7205.0,
+          "median_wait_seconds": 7020.0,
+          "p90_wait_seconds": 14724.0,
+          "max_queue_length": 202,
+          "customers_served": 179,
+          "total_arrivals": 381,
+          "throughput_per_hour": 22.4,
+          "counter_utilization": 0.998,
+          "service_level_attained": 12.8
+        },
+        {
+          "strategy": "fixed",
+          "mean_wait_seconds": 8224.8,
+          "median_wait_seconds": 8040.0,
+          "p90_wait_seconds": 15720.0,
+          "max_queue_length": 201,
+          "customers_served": 175,
+          "total_arrivals": 376,
+          "throughput_per_hour": 21.9,
+          "counter_utilization": 0.997,
+          "service_level_attained": 6.9
+        }
+      ]
+    },
+    "rule_based": {
+      "strategy": "rule_based",
+      "mean_wait_avg_seconds": 4541.7,
+      "mean_wait_std_seconds": 687.7,
+      "p90_wait_avg_seconds": 6721.2,
+      "counter_utilization_avg": 0.953,
+      "throughput_avg": 35.3,
+      "service_level_avg": 1.8,
+      "num_trials": 5,
+      "individual_runs": [
+        {
+          "strategy": "rule_based",
+          "mean_wait_seconds": 5008.5,
+          "median_wait_seconds": 6150.0,
+          "p90_wait_seconds": 7800.0,
+          "max_queue_length": 105,
+          "customers_served": 286,
+          "total_arrivals": 387,
+          "throughput_per_hour": 35.8,
+          "counter_utilization": 0.967,
+          "service_level_attained": 2.8
+        },
+        {
+          "strategy": "rule_based",
+          "mean_wait_seconds": 4144.3,
+          "median_wait_seconds": 4860.0,
+          "p90_wait_seconds": 5886.0,
+          "max_queue_length": 74,
+          "customers_served": 280,
+          "total_arrivals": 346,
+          "throughput_per_hour": 35.0,
+          "counter_utilization": 0.958,
+          "service_level_attained": 1.4
+        },
+        {
+          "strategy": "rule_based",
+          "mean_wait_seconds": 5309.6,
+          "median_wait_seconds": 6240.0,
+          "p90_wait_seconds": 7800.0,
+          "max_queue_length": 97,
+          "customers_served": 284,
+          "total_arrivals": 367,
+          "throughput_per_hour": 35.5,
+          "counter_utilization": 0.951,
+          "service_level_attained": 1.1
+        },
+        {
+          "strategy": "rule_based",
+          "mean_wait_seconds": 3398.9,
+          "median_wait_seconds": 3360.0,
+          "p90_wait_seconds": 5220.0,
+          "max_queue_length": 98,
+          "customers_served": 281,
+          "total_arrivals": 377,
+          "throughput_per_hour": 35.1,
+          "counter_utilization": 0.927,
+          "service_level_attained": 1.4
+        },
+        {
+          "strategy": "rule_based",
+          "mean_wait_seconds": 4847.4,
+          "median_wait_seconds": 6060.0,
+          "p90_wait_seconds": 6900.0,
+          "max_queue_length": 112,
+          "customers_served": 282,
+          "total_arrivals": 393,
+          "throughput_per_hour": 35.2,
+          "counter_utilization": 0.964,
+          "service_level_attained": 2.5
+        }
+      ]
+    },
+    "optimization": {
+      "strategy": "optimization",
+      "mean_wait_avg_seconds": 7677.6,
+      "mean_wait_std_seconds": 523.5,
+      "p90_wait_avg_seconds": 14570.4,
+      "counter_utilization_avg": 0.999,
+      "throughput_avg": 23.6,
+      "service_level_avg": 8.0,
+      "num_trials": 5,
+      "individual_runs": [
+        {
+          "strategy": "optimization",
+          "mean_wait_seconds": 8298.0,
+          "median_wait_seconds": 7440.0,
+          "p90_wait_seconds": 15768.0,
+          "max_queue_length": 210,
+          "customers_served": 187,
+          "total_arrivals": 396,
+          "throughput_per_hour": 23.4,
+          "counter_utilization": 1.0,
+          "service_level_attained": 5.3
+        },
+        {
+          "strategy": "optimization",
+          "mean_wait_seconds": 7324.4,
+          "median_wait_seconds": 6840.0,
+          "p90_wait_seconds": 12900.0,
+          "max_queue_length": 159,
+          "customers_served": 191,
+          "total_arrivals": 349,
+          "throughput_per_hour": 23.9,
+          "counter_utilization": 1.0,
+          "service_level_attained": 5.8
+        },
+        {
+          "strategy": "optimization",
+          "mean_wait_seconds": 7877.6,
+          "median_wait_seconds": 7260.0,
+          "p90_wait_seconds": 15336.0,
+          "max_queue_length": 189,
+          "customers_served": 188,
+          "total_arrivals": 375,
+          "throughput_per_hour": 23.5,
+          "counter_utilization": 1.0,
+          "service_level_attained": 10.6
+        },
+        {
+          "strategy": "optimization",
+          "mean_wait_seconds": 6847.5,
+          "median_wait_seconds": 6360.0,
+          "p90_wait_seconds": 13380.0,
+          "max_queue_length": 195,
+          "customers_served": 191,
+          "total_arrivals": 385,
+          "throughput_per_hour": 23.9,
+          "counter_utilization": 0.994,
+          "service_level_attained": 12.0
+        },
+        {
+          "strategy": "optimization",
+          "mean_wait_seconds": 8040.3,
+          "median_wait_seconds": 7740.0,
+          "p90_wait_seconds": 15468.0,
+          "max_queue_length": 190,
+          "customers_served": 187,
+          "total_arrivals": 375,
+          "throughput_per_hour": 23.4,
+          "counter_utilization": 1.0,
+          "service_level_attained": 6.4
+        }
+      ]
+    }
+  },
+  "sensitivity_arrival_rates": {
+    "arrival_rate_20": {
+      "fixed": {
+        "mean_wait_seconds": 2830.6,
+        "utilization": 0.983,
+        "service_level": 16.8
+      },
+      "rule_based": {
+        "mean_wait_seconds": 1229.2,
+        "utilization": 0.891,
+        "service_level": 18.7
+      },
+      "optimization": {
+        "mean_wait_seconds": 1361.4,
+        "utilization": 0.816,
+        "service_level": 51.7
+      }
+    },
+    "arrival_rate_30": {
+      "fixed": {
+        "mean_wait_seconds": 7323.7,
+        "utilization": 0.999,
+        "service_level": 9.6
+      },
+      "rule_based": {
+        "mean_wait_seconds": 2646.5,
+        "utilization": 0.942,
+        "service_level": 5.5
+      },
+      "optimization": {
+        "mean_wait_seconds": 5080.3,
+        "utilization": 0.759,
+        "service_level": 15.9
+      }
+    },
+    "arrival_rate_40": {
+      "fixed": {
+        "mean_wait_seconds": 8632.8,
+        "utilization": 1.0,
+        "service_level": 7.4
+      },
+      "rule_based": {
+        "mean_wait_seconds": 5841.1,
+        "utilization": 0.964,
+        "service_level": 1.4
+      },
+      "optimization": {
+        "mean_wait_seconds": 8083.0,
+        "utilization": 0.999,
+        "service_level": 6.7
+      }
+    },
+    "arrival_rate_50": {
+      "fixed": {
+        "mean_wait_seconds": 9457.5,
+        "utilization": 1.0,
+        "service_level": 7.5
+      },
+      "rule_based": {
+        "mean_wait_seconds": 7402.8,
+        "utilization": 0.976,
+        "service_level": 2.3
+      },
+      "optimization": {
+        "mean_wait_seconds": 9457.5,
+        "utilization": 1.0,
+        "service_level": 7.5
+      }
+    }
+  },
+  "sensitivity_service_durations": {
+    "service_time_5.0m": {
+      "fixed": {
+        "mean_wait_seconds": 5142.5,
+        "utilization": 0.996,
+        "service_level": 13.8
+      },
+      "rule_based": {
+        "mean_wait_seconds": 1196.1,
+        "utilization": 0.913,
+        "service_level": 38.9
+      },
+      "optimization": {
+        "mean_wait_seconds": 4293.9,
+        "utilization": 0.824,
+        "service_level": 16.6
+      }
+    },
+    "service_time_7.5m": {
+      "fixed": {
+        "mean_wait_seconds": 8169.8,
+        "utilization": 0.998,
+        "service_level": 7.6
+      },
+      "rule_based": {
+        "mean_wait_seconds": 4820.8,
+        "utilization": 0.959,
+        "service_level": 1.8
+      },
+      "optimization": {
+        "mean_wait_seconds": 7833.3,
+        "utilization": 1.0,
+        "service_level": 7.2
+      }
+    },
+    "service_time_10.0m": {
+      "fixed": {
+        "mean_wait_seconds": 9243.6,
+        "utilization": 1.0,
+        "service_level": 6.6
+      },
+      "rule_based": {
+        "mean_wait_seconds": 7579.8,
+        "utilization": 0.966,
+        "service_level": 1.5
+      },
+      "optimization": {
+        "mean_wait_seconds": 8774.6,
+        "utilization": 1.0,
+        "service_level": 6.1
+      }
+    }
+  },
+  "hypotheses_evaluated": {
+    "H1_wait_reduction": "Forecast-informed dynamic allocation reduces mean and P90 customer waiting times compared to fixed counters during demand peaks.",
+    "H2_utilization_stability": "Dynamic allocation prevents counter starvation during off-peak periods without inducing excessive queue buildup."
+  },
+  "simulation_parameters": {
+    "default_arrival_rate_per_hour": 35.0,
+    "default_avg_service_minutes": 7.5,
+    "default_counters": 3,
+    "simulation_window_hours": 8,
+    "reproducible_seed": 100
+  }
+}

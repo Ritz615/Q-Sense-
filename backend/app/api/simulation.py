@@ -54,8 +54,16 @@ async def _run_whatif_simulation(run_id: int, config: dict, db_url: str):
                     )
                     sr = SimulationResult(
                         run_id=run_id,
-                        strategy=strategy,
-                        **result_data,
+                        strategy=result_data.get("strategy", strategy),
+                        mean_wait_seconds=result_data["mean_wait_seconds"],
+                        median_wait_seconds=result_data["median_wait_seconds"],
+                        p90_wait_seconds=result_data["p90_wait_seconds"],
+                        max_queue_length=result_data["max_queue_length"],
+                        customers_served=result_data["customers_served"],
+                        throughput_per_hour=result_data["throughput_per_hour"],
+                        counter_utilization=result_data["counter_utilization"],
+                        service_level_attained=result_data.get("service_level_attained"),
+                        detailed_results=result_data.get("detailed_results"),
                     )
                     session.add(sr)
             session.commit()

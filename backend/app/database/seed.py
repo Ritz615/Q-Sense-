@@ -13,7 +13,7 @@ from app.core.config import settings
 from app.core.security import get_password_hash
 from app.models.user import User
 from app.models.operational import Department, ServiceType, Counter, Staff, StaffSkill
-from app.models.queue import QueueObservation, QueueEvent, QueueTicket
+from app.models.queue import QueueObservation, QueueEvent, QueueTicket, CameraSource
 from app.database.session import Base
 
 
@@ -76,7 +76,7 @@ def seed(engine):
         )
         session.add_all([admin, operator])
         session.flush()
-        print("  ✓ Users created (admin / operator)")
+        print("  [OK] Users created (admin / operator)")
 
         # ─── Departments ──────────────────────────────────────────────
         depts = []
@@ -85,7 +85,7 @@ def seed(engine):
             session.add(dept)
             session.flush()
             depts.append(dept)
-        print(f"  ✓ {len(depts)} departments created")
+        print(f"  [OK] {len(depts)} departments created")
 
         # ─── Service Types ────────────────────────────────────────────
         for dept_idx, name, code, avg_time in SERVICE_TYPES:
@@ -96,7 +96,7 @@ def seed(engine):
                 avg_service_time_seconds=avg_time,
             )
             session.add(stype)
-        print(f"  ✓ {len(SERVICE_TYPES)} service types created")
+        print(f"  [OK] {len(SERVICE_TYPES)} service types created")
 
         # ─── Counters ─────────────────────────────────────────────────
         counter_count = 0
@@ -113,7 +113,7 @@ def seed(engine):
                 )
                 session.add(counter)
                 counter_count += 1
-        print(f"  ✓ {counter_count} counters created")
+        print(f"  [OK] {counter_count} counters created")
 
         # ─── Staff ────────────────────────────────────────────────────
         staff_list = []
@@ -135,7 +135,21 @@ def seed(engine):
                     skill = StaffSkill(staff_id=s.id, department_id=d.id, proficiency="trained")
                     session.add(skill)
             staff_list.append(s)
-        print(f"  ✓ {len(staff_list)} staff members created")
+        print(f"  [OK] {len(staff_list)} staff members created")
+
+        # ─── Camera Sources ───────────────────────────────────────────
+        for dept in depts:
+            cam = CameraSource(
+                department_id=dept.id,
+                name=f"{dept.code} Entrance Queue Camera",
+                stream_source="synthetic",
+                roi_normalized=[0.10, 0.35, 0.90, 0.95],
+                status="synthetic",
+                is_active=True,
+                last_occupancy=random.randint(3, 8),
+            )
+            session.add(cam)
+        print(f"  [OK] {len(depts)} camera sources created")
 
         # ─── Historical Queue Observations (90 days) ──────────────────
         obs_count = 0
@@ -190,13 +204,13 @@ def seed(engine):
                 session.flush()
 
         session.flush()
-        print(f"  ✓ {obs_count} historical observations generated (90 days)")
+        print(f"  [OK] {obs_count} historical observations generated (90 days)")
 
         session.commit()
-        print("\n✅ Seeding complete!")
+        print("\n[DONE] Seeding complete!")
         print("   Admin login: username=admin  password=QSense@Admin2024")
         print("   Operator login: username=operator  password=Operator@2024")
-        print("   ⚠  All data is synthetic — not real government data.")
+        print("   [NOTE] All data is synthetic - not real government data.")
 
 
 if __name__ == "__main__":

@@ -27,6 +27,8 @@ env/
 backend/ml/models/**/*.pkl
 backend/ml/models/**/*.pt
 backend/ml/data/**
+ml/models/**/*.pkl
+ml/models/**/*.pt
 !backend/ml/data/.gitkeep
 !backend/ml/models/.gitkeep
 

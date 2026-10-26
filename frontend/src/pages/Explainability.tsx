@@ -24,17 +24,38 @@ export default function Explainability() {
     Promise.all([
       departmentsApi.list(),
       forecastingApi.listModels(),
-      optimizationApi.listRecommendations({ status: 'pending' }),
+      optimizationApi.listRecommendations({}),
     ]).then(([dRes, mRes, rRes]) => {
       setDepartments(dRes.data)
-      setModels(mRes.data.filter((m: any) => m.status === 'ready'))
-      setRecommendations(rRes.data.slice(0, 10))
-      if (dRes.data.length > 0) setSelectedDept(dRes.data[0].id)
+      const readyModels = mRes.data.filter((m: any) => m.status === 'ready')
+      setModels(readyModels)
+      const recList = rRes.data.slice(0, 10)
+      setRecommendations(recList)
+      
+      const firstDeptId = dRes.data.length > 0 ? dRes.data[0].id : 1
+      setSelectedDept(firstDeptId)
+      explainApi.predictionContext(firstDeptId).then(res => setContext(res.data)).catch(() => {})
+
+      const treeModel = readyModels.find((m: any) => m.model_type === 'rf' || m.model_type === 'gb') || readyModels[0]
+      if (treeModel) {
+        setSelectedModel(treeModel.id)
+        explainApi.featureImportance(treeModel.id).then(res => setImportance(res.data.feature_importance || [])).catch(() => {})
+      }
+
+      if (recList.length > 0) {
+        setSelectedRec(recList[0].id)
+        explainApi.recommendation(recList[0].id).then(res => setRecExplain(res.data)).catch(() => {})
+      }
     }).catch(() => setError('Failed to load data'))
     .finally(() => setLoading(false))
   }, [])
 
   const loadImportance = async (modelId: number) => {
+    if (!modelId) {
+      setSelectedModel(null)
+      setImportance([])
+      return
+    }
     setImpLoading(true)
     try {
       const res = await explainApi.featureImportance(modelId)
@@ -45,6 +66,11 @@ export default function Explainability() {
   }
 
   const loadRecExplain = async (recId: number) => {
+    if (!recId) {
+      setSelectedRec(null)
+      setRecExplain(null)
+      return
+    }
     setRecLoading(true)
     try {
       const res = await explainApi.recommendation(recId)
@@ -54,10 +80,11 @@ export default function Explainability() {
     finally { setRecLoading(false) }
   }
 
-  const loadContext = async () => {
+  const loadContext = async (deptId?: number) => {
+    const targetDept = deptId !== undefined ? deptId : selectedDept
     setCtxLoading(true)
     try {
-      const res = await explainApi.predictionContext(selectedDept)
+      const res = await explainApi.predictionContext(targetDept)
       setContext(res.data)
     } catch { setError('Failed to load context') }
     finally { setCtxLoading(false) }
@@ -85,10 +112,19 @@ export default function Explainability() {
         <div className="flex items-center justify-between mb-4">
           <h3>Queue Trend Narrative</h3>
           <div className="flex gap-2 items-center">
-            <select id="context-dept-select" className="input w-52" value={selectedDept} onChange={e => setSelectedDept(Number(e.target.value))}>
+            <select
+              id="context-dept-select"
+              className="input w-52"
+              value={selectedDept}
+              onChange={e => {
+                const deptId = Number(e.target.value)
+                setSelectedDept(deptId)
+                loadContext(deptId)
+              }}
+            >
               {departments.map((d: any) => <option key={d.id} value={d.id}>{d.name}</option>)}
             </select>
-            <button id="get-context-btn" onClick={loadContext} disabled={ctxLoading} className="btn-secondary text-sm py-2">
+            <button id="get-context-btn" onClick={() => loadContext(selectedDept)} disabled={ctxLoading} className="btn-secondary text-sm py-2">
               {ctxLoading ? 'Loading…' : 'Get Narrative'}
             </button>
           </div>

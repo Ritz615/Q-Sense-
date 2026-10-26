@@ -10,6 +10,7 @@ Models implemented:
 Uses chronological train/val/test splits to avoid data leakage.
 """
 import os
+import sys
 import json
 import math
 import pickle
@@ -17,6 +18,11 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any, Optional
+
+workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+if workspace_root not in sys.path:
+    sys.path.insert(0, workspace_root)
+
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models.queue import QueueObservation
@@ -45,8 +51,10 @@ def _build_features(df: pd.DataFrame) -> pd.DataFrame:
     df["waiting_lag2"] = df["people_waiting"].shift(2)
     df["completions_lag1"] = df["completed_services"].shift(1)
     df["rolling_mean_arrivals_4"] = df["arrivals_in_interval"].rolling(4, min_periods=1).mean()
-    df["rolling_std_arrivals_4"] = df["arrivals_in_interval"].rolling(4, min_periods=1).std().fillna(0)
-    return df.dropna(subset=["arrivals_lag1"])
+    df["rolling_std_arrivals_4"] = df["arrivals_in_interval"].rolling(4, min_periods=1).std().fillna(0.0)
+    df = df.dropna(subset=["arrivals_lag4"]).copy()
+    df[FEATURE_COLS] = df[FEATURE_COLS].fillna(0.0)
+    return df
 
 
 class ForecastingService:
@@ -145,60 +153,12 @@ class ForecastingService:
         elif model_type == "lstm":
             # LSTM using PyTorch
             try:
-                import torch
-                import torch.nn as nn
-
-                class LSTMModel(nn.Module):
-                    def __init__(self, input_size, hidden_size=64, num_layers=2):
-                        super().__init__()
-                        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, dropout=0.1)
-                        self.fc = nn.Linear(hidden_size, 1)
-
-                    def forward(self, x):
-                        out, _ = self.lstm(x)
-                        return self.fc(out[:, -1, :]).squeeze(-1)
-
-                SEQ_LEN = 8
-                def make_sequences(X_arr, y_arr, seq_len):
-                    Xs, ys = [], []
-                    for i in range(len(X_arr) - seq_len):
-                        Xs.append(X_arr[i:i+seq_len])
-                        ys.append(y_arr[i+seq_len])
-                    return np.array(Xs, dtype=np.float32), np.array(ys, dtype=np.float32)
-
-                from sklearn.preprocessing import StandardScaler
-                scaler = StandardScaler()
-                X_all = scaler.fit_transform(X)
-                X_seq, y_seq = make_sequences(X_all, y, SEQ_LEN)
-
-                split1 = int(len(X_seq) * 0.70)
-                split2 = int(len(X_seq) * 0.85)
-                X_tr = torch.tensor(X_seq[:split1])
-                y_tr = torch.tensor(y_seq[:split1])
-                X_te = torch.tensor(X_seq[split2:])
-                y_te = y_seq[split2:]
-
-                model_nn = LSTMModel(input_size=len(FEATURE_COLS))
-                optimizer = torch.optim.Adam(model_nn.parameters(), lr=0.001)
-                loss_fn = nn.MSELoss()
-
-                for epoch in range(20):
-                    model_nn.train()
-                    optimizer.zero_grad()
-                    pred = model_nn(X_tr)
-                    loss = loss_fn(pred, y_tr)
-                    loss.backward()
-                    optimizer.step()
-
-                model_nn.eval()
-                with torch.no_grad():
-                    preds_test = model_nn(X_te).numpy()
-
-                y_test = y_te
-                model_obj = {"type": "lstm", "model": model_nn, "scaler": scaler, "seq_len": SEQ_LEN}
-
-            except ImportError:
-                # Fallback to RF if torch not available
+                from ml.forecasting.deep_learning import LSTMForecaster
+                lstm_model = LSTMForecaster(seq_len=4, epochs=20, lr=0.01)
+                lstm_model.fit(X_train, y_train)
+                preds_test = lstm_model.predict(X_test)
+                model_obj = {"type": "lstm", "model": lstm_model}
+            except Exception as e:
                 from sklearn.ensemble import RandomForestRegressor
                 from sklearn.preprocessing import StandardScaler
                 scaler = StandardScaler()
@@ -208,7 +168,15 @@ class ForecastingService:
                 clf.fit(X_train_s, y_train)
                 preds_test = clf.predict(X_test_s)
                 model_obj = {"type": "rf", "model": clf, "scaler": scaler}
-                metrics["lstm_fallback"] = "PyTorch not available; fell back to RandomForest"
+                metrics["lstm_fallback"] = f"LSTM fallback to RF: {e}"
+
+        elif model_type == "tcn":
+            # Temporal Convolutional Network using PyTorch
+            from ml.forecasting.deep_learning import TCNForecaster
+            tcn_model = TCNForecaster(seq_len=4, epochs=20, lr=0.01)
+            tcn_model.fit(X_train, y_train)
+            preds_test = tcn_model.predict(X_test)
+            model_obj = {"type": "tcn", "model": tcn_model}
 
         else:
             raise ValueError(f"Unknown model type: {model_type}")
@@ -310,12 +278,11 @@ class ForecastingService:
                 clf = model_obj["model"]
                 pred_arrivals = float(clf.predict(scaler.transform(feat))[0])
             elif model_obj["type"] == "lstm":
-                import torch
-                scaler = model_obj["scaler"]
-                seq_len = model_obj.get("seq_len", 8)
-                # build sequence from recent features
-                feat_scaled = scaler.transform(feat)
-                pred_arrivals = float(model_obj["model"](torch.tensor(feat_scaled.reshape(1, 1, -1))).item())
+                lstm_model = model_obj["model"]
+                pred_arrivals = float(lstm_model.predict(feat)[0])
+            elif model_obj["type"] == "tcn":
+                tcn_model = model_obj["model"]
+                pred_arrivals = float(tcn_model.predict(feat)[0])
             else:
                 pred_arrivals = arr_l1
 

@@ -122,7 +122,7 @@ export default function Staff() {
                   <td className="table-cell font-medium">{s.full_name}</td>
                   <td className="table-cell text-sm text-slate-500">{s.department_id ? deptName(s.department_id) : '—'}</td>
                   <td className="table-cell text-xs text-slate-500">{s.shift_start} – {s.shift_end}</td>
-                  <td className="table-cell"><StatusBadge status={s.is_available ? 'open' : 'closed'} /></td>
+                  <td className="table-cell"><StatusBadge status={s.is_available ? 'available' : 'unavailable'} label={s.is_available ? 'Available' : 'Unavailable'} /></td>
                   <td className="table-cell">
                     <button
                       id={`toggle-staff-${s.id}`}

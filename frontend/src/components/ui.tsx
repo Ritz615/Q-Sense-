@@ -145,10 +145,14 @@ export function Alert({
 }
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
-export function StatusBadge({ status }: { status: string }) {
+export function StatusBadge({ status, label }: { status: string; label?: string }) {
   const map: Record<string, string> = {
     open: 'badge-green',
+    available: 'badge-green',
+    active: 'badge-green',
     closed: 'badge-gray',
+    unavailable: 'badge-gray',
+    inactive: 'badge-gray',
     busy: 'badge-yellow',
     maintenance: 'badge-red',
     ready: 'badge-green',
@@ -161,8 +165,8 @@ export function StatusBadge({ status }: { status: string }) {
     running: 'badge-blue',
   };
   return (
-    <span className={map[status] || 'badge-gray'}>
-      {status}
+    <span className={map[status.toLowerCase()] || 'badge-gray'}>
+      {label || status}
     </span>
   );
 }

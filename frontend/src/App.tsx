@@ -44,6 +44,7 @@ export default function App() {
       }>
         <Route index element={<Dashboard />} />
         <Route path="queue" element={<LiveQueue />} />
+        <Route path="live" element={<LiveQueue />} />
         <Route path="departments" element={<Departments />} />
         <Route path="counters" element={<Counters />} />
         <Route path="staff" element={<Staff />} />

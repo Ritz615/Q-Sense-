@@ -20,8 +20,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 480  # 8 hours
 
     # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./qsense.db"
-    DATABASE_SYNC_URL: str = "sqlite:///./qsense.db"
+    _backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    _db_file = os.path.join(_backend_dir, "qsense.db").replace("\\", "/")
+    DATABASE_URL: str = f"sqlite+aiosqlite:///{_db_file}"
+    DATABASE_SYNC_URL: str = f"sqlite:///{_db_file}"
 
     # PostgreSQL (production)
     POSTGRES_USER: Optional[str] = None
@@ -41,8 +43,8 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE_MB: int = 50
 
     # ML
-    MODEL_DIR: str = "./ml/models"
-    DATASETS_DIR: str = "./ml/data/datasets"
+    MODEL_DIR: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "ml", "models"))
+    DATASETS_DIR: str = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "ml", "data", "datasets"))
 
     # Simulation
     SIM_DEFAULT_SEED: int = 42

@@ -1,0 +1,892 @@
+<USER_REQUEST>
+MASTER PROMPT: BUILD THE COMPLETE Q-SENSE INTELLIGENT QUEUE MANAGEMENT SYSTEM
+
+Act as a senior full-stack software engineer, machine-learning engineer, computer-vision engineer, optimization researcher, UI/UX designer, database architect, and software tester.
+
+Your task is to design, implement, integrate, test, and document a complete, runnable software project titled:
+
+Q-Sense: A Deep Learning and Optimization-Based Intelligent Decision Support System for Queue Prediction and Dynamic Resource Allocation in Government Offices
+
+Build the entire application in the current workspace. Do not stop after creating a plan, wireframe, landing page, or initial folder structure. Create the actual source code, connect the modules, implement the backend logic, configure the database, run tests, fix errors, and prepare the project for demonstration.
+
+Work autonomously wherever reasonable. Make sensible technical decisions without repeatedly asking for confirmation. If a component requires unavailable hardware, external credentials, or real government data, implement a functional fallback and clearly document the limitation.
+
+The final result must be a coherent, integrated research prototype suitable for a university engineering project and research demonstration.
+
+⸻
+
+1. PROJECT PURPOSE
+
+Government offices often experience long queues, uneven workloads, unpredictable peak hours, and inefficient allocation of counters and staff. Fixed staffing arrangements cannot always respond to changing customer demand.
+
+Q-Sense will address these problems through an intelligent decision-support platform that combines:
+
+1. Computer vision for estimating real-time queue occupancy.
+2. Machine learning and deep learning for forecasting future queue demand and waiting times.
+3. Mathematical optimization for recommending counter and staff allocation.
+4. Queueing theory and discrete-event simulation for evaluating operational scenarios.
+5. Explainable AI for interpreting forecasts and allocation recommendations.
+6. Historical analytics for identifying bottlenecks and peak hours.
+7. A professional administrative dashboard for reviewing and approving recommendations.
+
+The system must be more than a queue-counting application. Its central contribution is the integration of prediction, optimization, and comparative evaluation into one operational workflow.
+
+Use a realistic government document-verification office as the default demonstration environment, with configurable departments such as:
+
+* Certificate and document services.
+* Revenue and tax services.
+* Identity and application verification.
+* General citizen support.
+
+These are demonstration departments, not claims about a specific real government office.
+
+2. DEVELOPMENT APPROACH
+
+Build the complete system in the current project workspace during this development run.
+
+Do not respond with instructions telling me to implement the remaining modules myself. Do not create only mockups or disconnected pages. Implement the actual application.
+
+Follow these rules:
+
+* Inspect the existing workspace before creating or overwriting files.
+* Preserve useful existing work.
+* Create all required source files and configuration.
+* Install or specify compatible dependencies where supported.
+* Connect every page to working backend functionality.
+* Connect the backend to persistent database storage.
+* Implement the machine-learning and optimization logic.
+* Include reproducible synthetic data so the project runs without an external dataset.
+* Make hardware-dependent features optional rather than allowing them to break the application.
+* Run automated tests and correct errors where possible.
+* Verify the complete application startup workflow.
+* Do not claim a test, training run, or integration has succeeded unless it has actually been verified.
+* If execution limits prevent completing an operation, finish the remaining independent work and clearly identify the unfinished item.
+
+Prioritize a working end-to-end application over excessive visual decoration.
+
+3. TECHNOLOGY STACK
+
+Use this stack consistently.
+
+Frontend
+
+* React.
+* Vite.
+* TypeScript.
+* Tailwind CSS.
+* React Router.
+* Recharts.
+* Lucide React.
+* Axios or a consistent fetch-based API client.
+
+Backend
+
+* Python.
+* FastAPI.
+* Pydantic.
+* SQLAlchemy.
+* Alembic database migrations.
+* WebSockets for real-time updates.
+* JWT-based authentication or another securely implemented authentication mechanism.
+
+Database
+
+* PostgreSQL as the primary production-oriented database.
+* SQLite as an optional lightweight local-development fallback if needed.
+* Seed scripts for initializing the demonstration environment.
+
+Machine learning
+
+* pandas.
+* NumPy.
+* scikit-learn.
+* PyTorch.
+* Suitable time-series preprocessing and evaluation utilities.
+
+Computer vision
+
+* OpenCV.
+* A compatible pretrained person detector, such as a suitable YOLO implementation.
+* Configurable queue regions of interest.
+* Optional video-file and webcam input.
+
+Optimization and simulation
+
+* Google OR-Tools or SciPy optimization.
+* A custom discrete-event simulation engine or an appropriate simulation library.
+* Reproducible random seeds.
+
+Testing and deployment
+
+* pytest.
+* Vitest.
+* React Testing Library.
+* Docker.
+* Docker Compose.
+* Environment-based configuration.
+
+Select compatible, maintainable package versions. Do not introduce unnecessary libraries.
+
+4. COMPLETE APPLICATION ARCHITECTURE
+
+Create an integrated application with these components:
+
+A. React administrative interface.
+
+B. FastAPI application and REST endpoints.
+
+C. PostgreSQL database and migrations.
+
+D. Queue observation and event-processing service.
+
+E. Synthetic arrival and service simulation engine.
+
+F. Computer-vision queue monitoring service.
+
+G. Historical-data preprocessing pipeline.
+
+H. Forecasting model training and inference service.
+
+I. Waiting-time estimation service.
+
+J. Counter and staff optimization engine.
+
+K. What-if simulation engine.
+
+L. Explainability and analytics service.
+
+M. Reporting and audit service.
+
+All modules must exchange data through clearly defined interfaces. Do not duplicate business logic across the frontend and backend.
+
+5. AUTHENTICATION AND USER ROLES
+
+Implement a functional login system with two roles.
+
+Administrator
+
+* View all departments and counters.
+* Manage counters, departments, and staff availability.
+* Import and inspect historical data.
+* View live and simulated queues.
+* Review forecasts.
+* Run allocation optimization.
+* Execute what-if simulations.
+* Approve or reject recommendations.
+* Review analytics and export reports.
+* Access audit logs and system settings.
+
+Counter operator
+
+* View assigned counters.
+* View the current queue.
+* Start and complete service transactions.
+* Report temporary counter unavailability.
+* View relevant estimated waiting times.
+* Record service events.
+
+Implement password hashing, role-based authorization, input validation, secure token handling, and protected administrative routes.
+
+Create a documented initial administrator setup process. Do not hardcode a production password into the source code.
+
+Do not expose secret keys in frontend files or commit real credentials.
+
+6. PROFESSIONAL UI AND USER EXPERIENCE
+
+Create a complete responsive administrative application, not a marketing landing page.
+
+Visual direction
+
+Use a restrained, professional government-technology interface:
+
+* Light neutral background.
+* Dark navy navigation.
+* Muted teal or blue for primary actions.
+* Clear typography and compact information hierarchy.
+* Subtle borders and restrained shadows.
+* Consistent spacing.
+* Accessible contrast.
+* Meaningful status indicators.
+* Desktop-first dashboard with tablet responsiveness.
+* Minimal animation.
+* No excessive gradients, random decorative illustrations, or generic AI-themed backgrounds.
+
+Make the application look as if a small software engineering team designed it for actual administrative use.
+
+Required pages
+
+1. Login.
+2. Main dashboard.
+3. Live queue monitoring.
+4. Department management.
+5. Counter management.
+6. Staff and availability management.
+7. Data import and preprocessing.
+8. Forecasting and model evaluation.
+9. Dynamic resource allocation.
+10. What-if simulation.
+11. Explainable AI.
+12. Historical analytics.
+13. Reports and exports.
+14. User management.
+15. Settings and audit logs.
+
+Create reusable components for metric cards, data tables, charts, loading states, empty states, error messages, dialogs, forms, and status indicators.
+
+Every visible button, filter, form, and navigation item must work or be explicitly marked as unavailable. Do not leave fake action buttons.
+
+7. MAIN DASHBOARD
+
+Display actual values retrieved from the backend.
+
+Include:
+
+* Current total queue population.
+* Active counters.
+* Available counters.
+* Estimated average waiting time.
+* Current arrival rate.
+* Service completion rate.
+* Forecast demand for the next hour.
+* Counter utilization.
+* Staff availability.
+* Congestion alerts.
+* Latest allocation recommendation.
+* Last successful data update.
+
+Add these charts:
+
+* Queue length over time.
+* Observed versus predicted arrivals.
+* Predicted waiting time by department.
+* Counter utilization comparison.
+* Hourly arrival patterns.
+* Service completion trends.
+* Historical performance comparison.
+
+Use real database records, computed results, or clearly identified synthetic observations.
+
+Label every chart and KPI appropriately as observed, estimated, predicted, or simulated.
+
+Do not fabricate live activity or present fixed numbers as current operational measurements.
+
+8. QUEUE MONITORING AND COMPUTER VISION
+
+Implement two complete operating modes.
+
+Mode A: Simulation
+
+Create a functioning simulation that generates customer arrivals, queue updates, service starts, service completions, and counter status changes.
+
+Allow configuration of:
+
+* Average arrival rate.
+* Department-level demand.
+* Number of active counters.
+* Average service duration.
+* Service-duration variability.
+* Peak-hour patterns.
+* Temporary staff absences.
+* Counter availability.
+
+Use reproducible random seeds for experimental runs.
+
+Provide start, pause, resume, and reset controls. Prevent duplicate background processes when restarting the simulation.
+
+Persist generated events in the database and update the dashboard.
+
+Mode B: Camera
+
+Create a backend service that accepts a configured webcam or uploaded video file.
+
+Implement:
+
+1. Frame acquisition.
+2. Person detection using a compatible pretrained model.
+3. Configurable queue regions of interest.
+4. Queue occupancy estimation.
+5. Temporal smoothing.
+6. Optional object tracking to reduce duplicate counting.
+7. Detection-quality and camera-status indicators.
+8. A frontend view of the camera feed or processed frames where supported.
+9. Storage of timestamped occupancy observations.
+10. Error handling when a camera is disconnected or the detector cannot load.
+
+Provide a manual or simulation fallback.
+
+Do not require a camera to launch the application.
+
+Do not use facial recognition or attempt to identify citizens. Avoid retaining raw video by default. Document model licensing and local hardware requirements.
+
+If no pretrained weights are available, provide a clear setup path and keep the rest of the system usable.
+
+9. DATA IMPORT AND PREPROCESSING
+
+Implement CSV upload, validation, preview, and import.
+
+Support fields such as:
+
+* timestamp
+* department_id
+* service_type
+* arrivals
+* people_waiting
+* active_counters
+* completed_services
+* average_service_time_seconds
+* observed_waiting_time_seconds
+* counter_status
+
+Some fields may be optional depending on the available dataset.
+
+Implement:
+
+* Column validation.
+* Data-type validation.
+* Missing-value reporting.
+* Duplicate detection.
+* Timestamp normalization.
+* Time-interval validation.
+* Outlier inspection.
+* Feature engineering.
+* Department and service encoding.
+* Consistent resampling where appropriate.
+* Import summaries and rejected-row reports.
+
+Do not silently remove legitimate peak-hour observations.
+
+Preserve raw imported records and maintain a separate processed dataset or transformation history.
+
+Include a sample dataset generator so the entire pipeline can be tested immediately.
+
+10. FORECASTING AND DEEP LEARNING
+
+Implement a complete model training, evaluation, persistence, and inference pipeline.
+
+Prediction targets
+
+Predict:
+
+* Queue arrivals.
+* Future queue length.
+* Estimated waiting time when reliable labels or an appropriately validated estimator are available.
+
+Provide forecast horizons of 15, 30, and 60 minutes.
+
+Models
+
+Implement these models:
+
+1. Historical time-of-day baseline.
+2. Moving-average or exponential-smoothing baseline.
+3. Random Forest or Gradient Boosting regression.
+4. LSTM time-series model.
+5. An optional second deep-learning architecture, such as a Temporal Convolutional Network, when the dataset and available resources justify it.
+
+Do not implement models only as labels in a dropdown. The selected model must execute real inference.
+
+Input features
+
+Consider:
+
+* Recent queue length.
+* Arrival counts.
+* Completed services.
+* Active counters.
+* Average service duration.
+* Hour and day of week.
+* Recent trends.
+* Department and service type.
+* Holiday indicators where reliable data exists.
+
+Generate features using information available at the forecast timestamp.
+
+Use chronological train, validation, and test splits. Avoid random splitting of time-series observations when it would leak future information.
+
+Evaluation
+
+Calculate:
+
+* MAE.
+* RMSE.
+* WAPE or sMAPE where appropriate.
+* Model performance by forecasting horizon.
+* Peak-hour versus off-peak performance.
+* Prediction-versus-actual plots.
+* Residual analysis.
+
+Handle zero values and missing labels correctly.
+
+Save model artifacts, preprocessing configurations, evaluation metrics, and model version information.
+
+Implement a clear fallback when a trained model is unavailable or the dataset is insufficient. Never claim that an LSTM has been trained when no training has occurred.
+
+Waiting-time estimation
+
+Do not equate the number of people in a queue with waiting time.
+
+Estimate waiting time using queue length, active counters, measured or estimated service rates, service discipline, and predicted arrivals.
+
+Use a documented queueing approximation when its assumptions are appropriate. Provide a discrete-event simulation for more realistic comparisons.
+
+Explain uncertainty and limitations when the available observations are insufficient.
+
+11. DYNAMIC RESOURCE ALLOCATION AND OPTIMIZATION
+
+Implement a genuine optimization engine using OR-Tools or SciPy.
+
+The engine should decide which counters should operate, how available staff can be allocated, and when reallocation is justified.
+
+Decision variables
+
+Include appropriate variables for:
+
+* Counter activation.
+* Staff-to-counter assignments.
+* Department-level staffing.
+* Allocation changes across forecast intervals.
+
+Objective function
+
+Minimize a documented weighted objective incorporating:
+
+* Expected waiting time.
+* Queue congestion.
+* Counter activation cost.
+* Staff reassignment cost.
+* Unserved demand or service-capacity shortfall.
+
+Allow configuration of relevant weights and document their interpretation.
+
+Do not use arbitrary output rules as a substitute for an optimization solver.
+
+Constraints
+
+Enforce:
+
+* Available staff only.
+* Staff skill compatibility.
+* No simultaneous assignment of one staff member to multiple counters.
+* Physical counter capacity.
+* Minimum staffing requirements.
+* Counter opening schedules.
+* Staff shift availability.
+* Department-specific operational requirements.
+* Any required specialist-service constraints.
+
+Check optimization feasibility before returning a recommendation.
+
+If no feasible solution exists, explain the conflicting constraints and offer a safe fallback recommendation.
+
+Recommendation interface
+
+Display:
+
+* Current allocation.
+* Recommended allocation.
+* Predicted demand.
+* Expected waiting-time change.
+* Counter utilization before and after.
+* Required staff availability.
+* Optimization objective and constraints.
+* Explanation of the proposed changes.
+* Solver status and any limitations.
+
+Allow an administrator to approve or reject recommendations.
+
+Record every decision in the audit log.
+
+Never silently apply a recommendation to real-world staffing.
+
+12. WHAT-IF SIMULATION AND COMPARATIVE EVALUATION
+
+Build an interactive scenario simulator.
+
+Allow users to adjust:
+
+* Arrival rate.
+* Number of staff.
+* Number of active counters.
+* Service duration.
+* Staff absences.
+* Peak-hour demand.
+* Department demand distribution.
+* Counter opening schedules.
+
+Compare at least three strategies:
+
+A. Fixed-counter allocation.
+
+B. Rule-based demand allocation.
+
+C. Optimization-based dynamic allocation.
+
+Use the same generated arrival scenarios, staff constraints, service assumptions, and random seeds for fair comparisons.
+
+Measure:
+
+* Mean waiting time.
+* Median waiting time.
+* 90th-percentile waiting time.
+* Maximum queue length.
+* Customers served.
+* Throughput.
+* Counter utilization.
+* Staff utilization where measurable.
+* Service-level target attainment, if configured.
+* Abandonment rate only if abandonment behavior is explicitly modeled.
+* Operational cost where valid cost data exists.
+
+Implement repeated simulation runs and show the variation in results.
+
+Provide scenario comparison charts, summary tables, and downloadable experiment results.
+
+Make it possible to save and revisit simulation scenarios.
+
+Do not guarantee that optimization always produces the best outcome. Report actual results and trade-offs.
+
+13. EXPLAINABLE AI
+
+Implement an explanation service that derives its output from actual model features and optimization results.
+
+Include:
+
+* Feature importance for suitable models.
+* SHAP explanations where appropriate.
+* Prediction-versus-baseline comparisons.
+* Main factors associated with queue growth.
+* Constraints that influenced allocation.
+* Expected effect of the proposed staffing change.
+* Explanation confidence or limitations where supported.
+
+Generate readable explanations based on actual data.
+
+For example:
+
+“The forecast indicates increased demand for document verification during the next interval. One additional eligible counter is recommended because projected arrivals are high relative to current service capacity and an available trained staff member can be assigned.”
+
+Only show such an explanation when supported by the underlying prediction and optimization results.
+
+Clearly distinguish correlation, prediction, and causation.
+
+14. DATABASE AND DATA MODEL
+
+Create database models, migrations, constraints, and indexes for:
+
+* users
+* departments
+* service_types
+* counters
+* staff
+* staff_skills
+* staff_availability
+* queue_tickets
+* queue_events
+* queue_observations
+* camera_sources
+* model_versions
+* forecast_results
+* allocation_recommendations
+* allocation_decisions
+* simulation_runs
+* simulation_results
+* audit_logs
+
+Use suitable relationships and timestamps.
+
+Support historical queries efficiently.
+
+Do not store unnecessary citizen information or government identity numbers. Use generated queue identifiers for demonstration data.
+
+Identify whether each observation originates from a camera, manual entry, imported dataset, or simulation.
+
+15. API AND REAL-TIME INTEGRATION
+
+Implement documented FastAPI endpoints for:
+
+* Authentication.
+* Users and roles.
+* Departments.
+* Counters and staff.
+* Queue observations.
+* Queue events.
+* Camera status.
+* CSV upload and validation.
+* Data preprocessing.
+* Model training.
+* Model evaluation.
+* Forecast generation.
+* Optimization recommendations.
+* Recommendation approval and rejection.
+* What-if simulation.
+* Explainability.
+* Historical analytics.
+* Report generation.
+* Audit logs.
+
+Use Pydantic validation, consistent error responses, pagination, and appropriate HTTP status codes.
+
+Use WebSockets for live queue updates where appropriate. Implement reconnection handling and prevent duplicate event processing.
+
+Verify that frontend forms and actions call the actual backend endpoints.
+
+16. REPORTS AND EXPORTS
+
+Generate CSV and PDF reports containing:
+
+* Report title.
+* Selected department and date range.
+* Data-source information.
+* Observed and predicted metrics.
+* Forecasting model evaluation.
+* Counter utilization.
+* Allocation comparison.
+* Simulation configuration.
+* Summary of limitations.
+
+Use actual database records and computed experiment results.
+
+Clearly identify simulation-only reports and avoid presenting them as evidence from a real government office.
+
+17. SECURITY AND RELIABILITY
+
+Implement:
+
+* Password hashing.
+* Role-based authorization.
+* Environment-based secret configuration.
+* Upload validation and size limits.
+* Database transaction handling.
+* Secure error messages.
+* Audit logging.
+* Camera access restrictions.
+* Proper input validation.
+* Protection against unauthorized administrative actions.
+* Graceful recovery from failed predictions and camera disconnections.
+
+Do not make eligibility, entitlement, or citizen-priority decisions based on protected characteristics.
+
+The platform is an advisory tool. Human administrators remain responsible for staffing decisions.
+
+18. SYNTHETIC DATA AND DEMONSTRATION MODE
+
+The application must work immediately without real government data.
+
+Generate a reproducible synthetic dataset with:
+
+* Multiple departments.
+* Multiple counters.
+* Different service durations.
+* Time-dependent arrival patterns.
+* Morning and afternoon peaks.
+* Variable service capacity.
+* Counter outages.
+* Staff absences.
+* Historical queue observations.
+* Simulated service completion events.
+* Observed or simulated waiting-time labels with a documented generation method.
+
+Make the synthetic data sufficiently varied to demonstrate forecasting, bottlenecks, and optimization.
+
+Provide a seed script and a reset command.
+
+Do not describe synthetic data as real-world evidence. Clearly label all demonstration-only values.
+
+19. TESTING AND QUALITY ASSURANCE
+
+Create automated tests covering:
+
+Backend
+
+* Authentication and authorization.
+* Database CRUD operations.
+* CSV validation.
+* Queue-event processing.
+* Prediction APIs.
+* Model loading.
+* Forecast metrics.
+* Optimization feasibility.
+* Staff assignment constraints.
+* Simulation reproducibility.
+* Report exports.
+
+Frontend
+
+* Login flow.
+* Navigation.
+* API error handling.
+* Dashboard loading states.
+* CSV upload validation.
+* Simulation controls.
+* Recommendation approval workflow.
+* Report download actions.
+
+Integration
+
+* Start the backend and database.
+* Initialize the schema.
+* Load synthetic data.
+* Generate queue observations.
+* Produce forecasts.
+* Generate an allocation recommendation.
+* Execute a comparative simulation.
+* View the results in the dashboard.
+* Export a report.
+
+Fix discovered issues rather than merely listing them.
+
+If a test cannot run because of unavailable dependencies, hardware, or environment restrictions, report the exact reason.
+
+20. RESEARCH METHODOLOGY AND EXPERIMENTS
+
+Create research documentation that explains:
+
+* The problem statement.
+* Motivation and objectives.
+* System architecture.
+* Data collection or synthetic-data generation.
+* Data preprocessing.
+* Forecasting methodology.
+* Model selection.
+* Optimization formulation.
+* Objective-function weights.
+* Operational constraints.
+* Simulation assumptions.
+* Evaluation metrics.
+* Experimental setup.
+* Results.
+* Limitations.
+* Future work.
+
+Evaluate the hypothesis that forecast-informed allocation can improve queue performance relative to fixed-counter management under suitable demand conditions.
+
+Run experiments using identical arrival scenarios and constraints.
+
+Report actual measurements, absolute differences, percentage differences, and variability across repeated simulation runs.
+
+Include sensitivity analysis for arrival rates, service times, staffing availability, and forecast errors.
+
+Do not fabricate research findings, model accuracy, waiting-time reductions, or statistical significance. If experiments have not run, label their results as pending.
+
+If the project uses only synthetic data, describe it as a simulation-based evaluation and discuss the need for real-world validation.
+
+21. REQUIRED PROJECT STRUCTURE
+
+Create a maintainable structure similar to:
+
+q-sense/
+frontend/
+src/
+components/
+layouts/
+pages/
+services/
+hooks/
+types/
+package.json
+backend/
+app/
+api/
+core/
+database/
+models/
+schemas/
+services/
+main.py
+tests/
+requirements.txt
+ml/
+data/
+preprocessing/
+forecasting/
+computer_vision/
+optimization/
+simulation/
+evaluation/
+datasets/
+research/
+scripts/
+docker-compose.yml
+.env.example
+README.md
+
+Adjust the structure if required by the chosen tools, but keep frontend, backend, machine-learning logic, tests, and research artifacts clearly separated.
+
+22. EXECUTION AND DELIVERY REQUIREMENTS
+
+Implement the project now.
+
+Execute the following tasks in order without stopping after planning:
+
+1. Inspect the workspace and create the project structure.
+2. Implement the database and backend.
+3. Implement the frontend and navigation.
+4. Connect frontend APIs to backend services.
+5. Implement synthetic-data generation and queue simulation.
+6. Implement the forecasting pipeline and model evaluation.
+7. Implement the computer-vision integration and fallback.
+8. Implement optimization and what-if simulation.
+9. Implement explainability, analytics, and reporting.
+10. Add security controls and automated tests.
+11. Run the available tests and fix failures.
+12. Verify startup and the major end-to-end workflows.
+13. Write the README and research documentation.
+14. Provide a final implementation report.
+
+If the environment supports running shell commands, use them to install dependencies, initialize the database, execute tests, and start the application where feasible.
+
+Do not stop to ask me to approve routine implementation decisions. Use sensible defaults and document them.
+
+Do not remove existing working code unnecessarily.
+
+Do not claim that a module is complete merely because files have been created. Verify its core behavior.
+
+If a feature cannot be fully executed because an external dependency or hardware is unavailable, implement the best functional fallback and identify the missing requirement.
+
+23. FINAL ACCEPTANCE CRITERIA
+
+The completed project must allow an administrator to:
+
+1. Sign in.
+2. View operational queue information.
+3. Load synthetic or imported historical data.
+4. Start and control a queue simulation.
+5. Monitor queue observations.
+6. Generate future queue predictions.
+7. Compare forecasting models using computed metrics.
+8. Obtain feasible counter-allocation recommendations.
+9. Review the reasons behind each recommendation.
+10. Approve or reject a recommendation.
+11. Run what-if scenarios.
+12. Compare fixed, rule-based, and optimization-based strategies.
+13. View historical analytics.
+14. Export reports.
+15. Review system limitations and audit records.
+
+The application must run using documented commands and must not depend on a paid external AI API for its core forecasting and optimization functionality.
+
+The camera module may require optional model weights or hardware, but its absence must not prevent the rest of the system from operating.
+
+Final instruction
+
+Do not return another project plan. Build the complete Q-Sense application in the current workspace, integrate the components, run the available tests, correct errors, and provide the runnable deliverable.
+
+At completion, report:
+
+* Features implemented and verified.
+* Files and modules created.
+* Commands required to install and run the application.
+* Test results.
+* How to access the dashboard.
+* How to train and evaluate models.
+* How to run the optimization experiments.
+* Known limitations and unfinished features.
+
+Be accurate about what has actually been implemented and tested. The goal is a usable, research-oriented software system with genuine predictive and optimization logic, not merely a visually impressive prototype.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-26T22:17:16+05:30.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from Gemini 3.8 Flash (High) to Claude Sonnet 4.6 (Thinking). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

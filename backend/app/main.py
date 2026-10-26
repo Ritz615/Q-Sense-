@@ -67,6 +67,7 @@ from app.api.simulation import router as simulation_router
 from app.api.analytics import router as analytics_router
 from app.api.data_import import router as data_router
 from app.api.explainability import router as explain_router
+from app.api.camera import router as camera_router
 
 PREFIX = "/api/v1"
 
@@ -80,6 +81,7 @@ app.include_router(simulation_router, prefix=PREFIX)
 app.include_router(analytics_router, prefix=PREFIX)
 app.include_router(data_router, prefix=PREFIX)
 app.include_router(explain_router, prefix=PREFIX)
+app.include_router(camera_router, prefix=PREFIX)
 
 
 @app.get("/")

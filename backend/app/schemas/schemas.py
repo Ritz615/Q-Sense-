@@ -357,6 +357,50 @@ class ImportSummary(BaseModel):
     preview: Optional[List[dict]] = None
 
 
+# ─── Camera ──────────────────────────────────────────────────────────────────
+
+class CameraSourceCreate(BaseModel):
+    department_id: int
+    name: str
+    stream_source: str = "synthetic"
+    roi_normalized: Optional[List[float]] = [0.1, 0.35, 0.9, 0.95]
+
+
+class CameraSourceUpdate(BaseModel):
+    name: Optional[str] = None
+    stream_source: Optional[str] = None
+    roi_normalized: Optional[List[float]] = None
+    is_active: Optional[bool] = None
+
+
+class CameraSourceOut(BaseModel):
+    id: int
+    department_id: int
+    name: str
+    stream_source: str
+    roi_normalized: Optional[List[float]]
+    status: str
+    is_active: bool
+    last_occupancy: int
+    last_seen_at: Optional[datetime]
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class CameraFrameResponse(BaseModel):
+    camera_id: int
+    department_id: int
+    raw_occupancy: int
+    smoothed_occupancy: float
+    fps: float
+    status: str
+    roi: List[float]
+    detections_count: int
+    timestamp: datetime
+
+
 # ─── Pagination ──────────────────────────────────────────────────────────────
 
 class PaginatedResponse(BaseModel):
