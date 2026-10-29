@@ -5,6 +5,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { dashboardApi } from '../services/api';
 import {
   LayoutDashboard, Monitor, Building2, ToggleLeft, Users2,
   Upload, TrendingUp, Cpu, FlaskConical, Lightbulb,
@@ -35,6 +36,21 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  const loadNotifications = async () => {
+    try {
+      const res = await dashboardApi.getEvents({ hours: 12 });
+      setNotifications(res.data.slice(0, 8));
+    } catch {
+      // ignore
+    }
+  };
+
+  useEffect(() => {
+    loadNotifications();
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
@@ -224,14 +240,51 @@ export default function AppLayout() {
             </div>
 
             {/* Notification Bell */}
-            <button
-              aria-label="Notifications"
-              className="relative p-2 text-on-surface-variant hover:text-on-surface transition-colors rounded-lg bg-surface-container-low border border-outline-variant/15"
-              type="button"
-            >
-              <Bell size={18} />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-tertiary"></span>
-            </button>
+            <div className="relative">
+              <button
+                aria-label="Notifications"
+                onClick={() => {
+                  setShowNotifications(!showNotifications);
+                  if (!showNotifications) loadNotifications();
+                }}
+                className="relative p-2 text-on-surface-variant hover:text-on-surface transition-colors rounded-lg bg-surface-container-low border border-outline-variant/15"
+                type="button"
+              >
+                <Bell size={18} />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-tertiary"></span>
+              </button>
+
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-80 bg-surface-container-high border border-outline-variant/30 rounded-xl shadow-2xl p-3 z-50 flex flex-col gap-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-outline-variant/15">
+                    <span className="font-label-caps text-label-caps uppercase font-bold text-on-surface">Live Event Stream</span>
+                    <button
+                      onClick={() => setShowNotifications(false)}
+                      className="text-outline hover:text-on-surface text-xs"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <div className="flex flex-col gap-1.5 max-h-64 overflow-y-auto">
+                    {notifications.length === 0 ? (
+                      <div className="text-xs text-on-surface-variant py-4 text-center">No recent alerts in buffer</div>
+                    ) : (
+                      notifications.map((n, idx) => (
+                        <div key={idx} className="p-2 rounded bg-surface-container text-xs flex flex-col gap-0.5 border border-outline-variant/10">
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold text-primary capitalize">{n.event_type.replace(/_/g, ' ')}</span>
+                            <span className="text-[10px] text-outline">{new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          </div>
+                          <span className="text-on-surface-variant text-[11px]">
+                            {n.source} • Dept #{n.department_id || 1}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* User Profile */}
             <div className="flex items-center gap-space-sm pl-space-xs">

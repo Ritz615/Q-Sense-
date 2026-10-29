@@ -105,6 +105,20 @@ export default function Simulation() {
             <input id="sim-name-input" className="input" value={config.name} onChange={e => setConfig({...config, name: e.target.value})} />
           </div>
           <div>
+            <label className="label">Target Department</label>
+            <select
+              id="sim-dept-select"
+              className="input"
+              value={config.department_id}
+              onChange={e => setConfig({...config, department_id: e.target.value})}
+            >
+              <option value="">All Departments (Facility Wide)</option>
+              {departments.map((d: any) => (
+                <option key={d.id} value={d.id}>{d.name} ({d.code})</option>
+              ))}
+            </select>
+          </div>
+          <div>
             <label className="label">Arrival Rate (/hr)</label>
             <input id="sim-arrival-input" className="input" type="number" min={1} max={200} value={config.arrival_rate_per_hour} onChange={e => setConfig({...config, arrival_rate_per_hour: Number(e.target.value)})} />
           </div>

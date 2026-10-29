@@ -289,7 +289,7 @@ class ForecastingService:
             pred_arrivals = max(0.0, pred_arrivals)
 
             # Estimate queue length using M/M/c approximation
-            mu = 1 / (avg_service / 60 / 15)  # service capacity per 15 min per counter
+            mu = 1 / max(avg_service / 60 / 15, 1e-6)  # service capacity per 15 min per counter
             total_capacity = avg_counters * mu
             arrivals_per_interval = pred_arrivals
             prev_queue = wait_l1

@@ -22,7 +22,7 @@ def test_strategy_metrics_returned():
     for strat in ["fixed", "rule_based", "optimization"]:
         res = engine.simulate_strategy(
             strategy=strat,
-            arrival_rate_per_hour=25.0,
+            arrival_rate_per_hour=25.0,  
             num_counters=3,
             avg_service_time_minutes=6.0,
             duration_minutes=120,

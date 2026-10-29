@@ -73,6 +73,26 @@ export default function LiveQueue() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [queueList])
 
+  const handleCallSpecificCitizen = (citizenItem: typeof queueList[0], idx: number) => {
+    setActiveToken(citizenItem.token.replace('#', ''))
+    setCitizenName(citizenItem.name === 'Ready in Lobby' ? 'Mr. Liam Ross' : citizenItem.name)
+    setQueueList(prev => prev.filter((_, i) => i !== idx))
+    setElapsedSeconds(0)
+    setCheck1(true)
+    setCheck2(false)
+    setCheck3(false)
+    setCheck4(false)
+    setCopilotLoaded(false)
+    setStatusMsg(`Calling expedited ticket ${citizenItem.token} to Counter #04...`)
+    dashboardApi.createEvent({
+      department_id: selectedDept || 1,
+      counter_id: 4,
+      event_type: 'service_start',
+      payload: { token: citizenItem.token, citizen: citizenItem.name, priority: citizenItem.priority },
+    }).then(() => loadObs()).catch(() => {})
+    setTimeout(() => setStatusMsg(''), 4000)
+  }
+
   const handleCallNext = () => {
     if (queueList.length > 0) {
       const next = queueList[0]
@@ -86,6 +106,12 @@ export default function LiveQueue() {
       setCheck4(false)
       setCopilotLoaded(false)
       setStatusMsg(`Calling ${next.token} to Counter #04... Chime sounded.`)
+      dashboardApi.createEvent({
+        department_id: selectedDept || 1,
+        counter_id: 4,
+        event_type: 'service_start',
+        payload: { token: next.token, citizen: next.name },
+      }).then(() => loadObs()).catch(() => {})
       setTimeout(() => setStatusMsg(''), 4000)
     } else {
       setStatusMsg('No further citizens waiting in Zone B queue stream.')
@@ -96,12 +122,24 @@ export default function LiveQueue() {
   const handleCompleteService = () => {
     setProcessedCount(prev => prev + 1)
     setStatusMsg(`Service completed for ${activeToken}. Record logged to District Audit archive.`)
+    dashboardApi.createEvent({
+      department_id: selectedDept || 1,
+      counter_id: 4,
+      event_type: 'completion',
+      payload: { token: activeToken },
+    }).then(() => loadObs()).catch(() => {})
     setTimeout(() => setStatusMsg(''), 4000)
     handleCallNext()
   }
 
   const handleMarkNoShow = () => {
     setStatusMsg(`Citizen marked as No-Show for ${activeToken}. Ticket closed.`)
+    dashboardApi.createEvent({
+      department_id: selectedDept || 1,
+      counter_id: 4,
+      event_type: 'no_show',
+      payload: { token: activeToken },
+    }).then(() => loadObs()).catch(() => {})
     setTimeout(() => setStatusMsg(''), 3000)
     handleCallNext()
   }
@@ -480,6 +518,12 @@ export default function LiveQueue() {
                   <button
                     onClick={() => {
                       setStatusMsg(`Token ${activeToken} placed on hold.`)
+                      dashboardApi.createEvent({
+                        department_id: selectedDept || 1,
+                        counter_id: 4,
+                        event_type: 'hold',
+                        payload: { token: activeToken },
+                      }).then(() => loadObs()).catch(() => {})
                       setTimeout(() => setStatusMsg(''), 3000)
                     }}
                     className="bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-lg p-space-md flex flex-col items-center justify-center gap-space-xs text-center transition-all group border border-outline-variant/10"
@@ -494,6 +538,12 @@ export default function LiveQueue() {
                   <button
                     onClick={() => {
                       setStatusMsg(`Citizen transferred to Desk 06 (Cashier).`)
+                      dashboardApi.createEvent({
+                        department_id: selectedDept || 1,
+                        counter_id: 4,
+                        event_type: 'transfer',
+                        payload: { token: activeToken, to_desk: '06-Cashier' },
+                      }).then(() => loadObs()).catch(() => {})
                       setTimeout(() => setStatusMsg(''), 3000)
                     }}
                     className="bg-surface-container-high hover:bg-surface-container-highest text-on-surface rounded-lg p-space-md flex flex-col items-center justify-center gap-space-xs text-center transition-all group border border-outline-variant/10"
@@ -605,14 +655,32 @@ export default function LiveQueue() {
                 {/* Quick Notes & Incident Escalation Strip */}
                 <div className="flex items-center gap-space-sm pt-space-xs">
                   <button
-                    onClick={() => setStatusMsg('Desk note saved to customer docket.')}
+                    onClick={() => {
+                      setStatusMsg('Desk note saved to customer docket.')
+                      dashboardApi.createEvent({
+                        department_id: selectedDept || 1,
+                        counter_id: 4,
+                        event_type: 'desk_note',
+                        payload: { token: activeToken, note: 'Desk note saved to customer docket' },
+                      }).then(() => loadObs()).catch(() => {})
+                      setTimeout(() => setStatusMsg(''), 3000)
+                    }}
                     className="flex-1 py-1.5 px-space-sm rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface font-body-sm text-body-sm flex items-center justify-center gap-1 transition-colors border border-outline-variant/15"
                     type="button"
                   >
                     <span className="material-symbols-outlined text-[16px]">edit_note</span> Add Desk Note
                   </button>
                   <button
-                    onClick={() => setStatusMsg('Supervisor alerted: Floor incident escalated.')}
+                    onClick={() => {
+                      setStatusMsg('Supervisor alerted: Floor incident escalated.')
+                      dashboardApi.createEvent({
+                        department_id: selectedDept || 1,
+                        counter_id: 4,
+                        event_type: 'incident_escalated',
+                        payload: { token: activeToken, priority: 'urgent' },
+                      }).then(() => loadObs()).catch(() => {})
+                      setTimeout(() => setStatusMsg(''), 3000)
+                    }}
                     className="py-1.5 px-space-md rounded-lg bg-error-container text-on-error-container font-body-sm text-body-sm flex items-center justify-center gap-1 hover:brightness-110 transition-all font-semibold"
                     type="button"
                   >
@@ -637,10 +705,12 @@ export default function LiveQueue() {
                   {queueList.map((item, idx) => (
                     <div
                       key={idx}
-                      className={`flex items-center justify-between p-space-sm rounded-lg transition-colors border border-outline-variant/10 ${
+                      onClick={() => handleCallSpecificCitizen(item, idx)}
+                      title="Click to call this citizen next"
+                      className={`flex items-center justify-between p-space-sm rounded-lg transition-all cursor-pointer border ${
                         item.priority === 'special'
-                          ? 'bg-surface-container-high hover:bg-surface-container-highest border-tertiary/20'
-                          : 'bg-surface-container-low hover:bg-surface-container-high'
+                          ? 'bg-surface-container-high hover:bg-surface-container-highest border-tertiary/30 hover:border-tertiary'
+                          : 'bg-surface-container-low hover:bg-surface-container-high border-outline-variant/10 hover:border-primary/40'
                       }`}
                     >
                       <div className="flex items-center gap-space-sm">
@@ -803,13 +873,27 @@ export default function LiveQueue() {
             {/* Camera View Box */}
             <div className="relative w-full h-96 rounded-xl overflow-hidden bg-surface-container-lowest flex items-center justify-center border border-outline-variant/20 shadow-inner">
               {cameraSnapshotUrl ? (
-                <img src={cameraSnapshotUrl} alt="Camera Stream" className="w-full h-full object-contain" />
+                <img
+                  key={cameraSnapshotUrl}
+                  src={cameraSnapshotUrl}
+                  alt="Camera Stream"
+                  className="w-full h-full object-contain"
+
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    // retry once without token in case of auth issue
+                    if (!img.dataset.retried) {
+                      img.dataset.retried = '1';
+                      img.src = cameraSnapshotUrl.replace(/&token=[^&]*/, '');
+                    }
+                  }}
+                />
               ) : (
                 <div className="text-on-surface-variant font-label-code-sm">No camera snapshot feed available</div>
               )}
               {cameraMetrics && (
                 <div className="absolute top-4 left-4 bg-surface-container-lowest/80 backdrop-blur px-space-sm py-1 rounded text-primary font-label-code-sm border border-primary/20">
-                  Detected: {cameraMetrics.people_count} People • Conf: {(cameraMetrics.confidence * 100).toFixed(1)}%
+                  Detected: {cameraMetrics.detections_count} People • Occupancy: {cameraMetrics.smoothed_occupancy?.toFixed(1)} • FPS: {cameraMetrics.fps?.toFixed(1)}
                 </div>
               )}
             </div>

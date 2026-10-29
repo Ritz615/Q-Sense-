@@ -19,6 +19,69 @@ interface DashboardMetrics {
   last_updated: string
 }
 
+const ZONES_CONFIG = [
+  {
+    id: 'A',
+    name: 'Driver Licensing',
+    code: 'DL',
+    status: 'Optimal',
+    statusColor: 'secondary',
+    queue: 24,
+    wait: '8m',
+    cam: 'CAM-01A: DRIVER_LIC_WEST',
+    inflow: '2.1 cit/min (Cap: 3.5)',
+    backlog: 'Nominal queue flow',
+    deptIndex: 0,
+    rect: { x: '5%', y: '12%', width: '38%', height: '32%' },
+    color: '#4EDEA3'
+  },
+  {
+    id: 'B',
+    name: 'Vital Records & Permits',
+    code: 'VR',
+    status: 'Critical',
+    statusColor: 'error',
+    queue: 68,
+    wait: '26m',
+    cam: 'CAM-04B: VITAL_REC_NORTH',
+    inflow: '4.8 cit/min (Max cap: 2.2)',
+    backlog: 'Estimated backlog buildup: +18m',
+    deptIndex: 1,
+    rect: { x: '52%', y: '15%', width: '42%', height: '32%' },
+    color: '#FFB4AB'
+  },
+  {
+    id: 'C',
+    name: 'Cashier & Fee Pay',
+    code: 'CS',
+    status: 'Normal',
+    statusColor: 'secondary',
+    queue: 18,
+    wait: '5m',
+    cam: 'CAM-02C: CASHIER_EAST',
+    inflow: '1.6 cit/min (Cap: 4.0)',
+    backlog: 'Nominal payment cadence',
+    deptIndex: 2,
+    rect: { x: '5%', y: '55%', width: '38%', height: '35%' },
+    color: '#9DB2BF'
+  },
+  {
+    id: 'D',
+    name: 'Express Intake Kiosks',
+    code: 'EX',
+    status: 'Optimal',
+    statusColor: 'secondary',
+    queue: 32,
+    wait: '3m',
+    cam: 'CAM-03D: KIOSK_LOBBY',
+    inflow: '3.2 cit/min (Cap: 5.0)',
+    backlog: 'Fast-track digital flow',
+    deptIndex: 3,
+    rect: { x: '52%', y: '55%', width: '42%', height: '35%' },
+    color: '#4EDEA3'
+  },
+]
+
 export default function Dashboard() {
   const navigate = useNavigate()
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null)
@@ -26,6 +89,27 @@ export default function Dashboard() {
   const [hourlyPattern, setHourlyPattern] = useState<any[]>([])
   const [departments, setDepartments] = useState<any[]>([])
   const [selectedDept, setSelectedDept] = useState<number>(1)
+  const [selectedZone, setSelectedZone] = useState<string>('B')
+
+  const handleSelectZone = async (zone: typeof ZONES_CONFIG[0]) => {
+    setSelectedZone(zone.id)
+    if (departments.length > 0) {
+      const targetDept = departments[zone.deptIndex % departments.length]
+      if (targetDept) {
+        setSelectedDept(targetDept.id)
+        try {
+          const [tlRes, hpRes] = await Promise.all([
+            analyticsApi.timeline(targetDept.id, 6),
+            analyticsApi.hourlyPattern(targetDept.id, 7),
+          ])
+          setTimeline(tlRes.data.slice(-30))
+          setHourlyPattern(hpRes.data)
+        } catch {
+          // ignore
+        }
+      }
+    }
+  }
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [viewMode, setViewMode] = useState<'mesh' | 'density'>('mesh')
@@ -392,8 +476,10 @@ export default function Dashboard() {
             {/* Top Telemetry HUD Overlay */}
             <div className="absolute top-space-sm left-space-sm right-space-sm flex items-center justify-between pointer-events-none">
               <div className="flex items-center gap-space-xs bg-surface-container-lowest/85 backdrop-blur-md px-space-sm py-1 rounded border border-outline-variant/30">
-                <span className="w-2 h-2 rounded-full bg-error animate-pulse"></span>
-                <span className="font-label-code-sm text-label-code-sm text-on-surface font-semibold">CAM-04B: VITAL_REC_NORTH</span>
+                <span className="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                <span className="font-label-code-sm text-label-code-sm text-on-surface font-semibold">
+                  {ZONES_CONFIG.find(z => z.id === selectedZone)?.cam || 'CAM-04B: VITAL_REC_NORTH'}
+                </span>
                 <span className="font-label-code-sm text-label-code-sm text-on-surface-variant font-mono">1080p @ 30fps</span>
               </div>
               <div className="bg-surface-container-lowest/85 backdrop-blur-md px-space-sm py-1 rounded font-label-code-sm text-label-code-sm text-primary font-bold border border-outline-variant/30">
@@ -401,15 +487,27 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Overlaid Zone Critical Warning Flag on Zone B */}
-            <div className="absolute right-4 top-14 bg-surface-container-high/95 backdrop-blur-md p-space-sm rounded-lg shadow-xl max-w-xs flex flex-col gap-1 border border-error/40">
-              <div className="flex items-center gap-1 text-error font-label-caps text-label-caps uppercase font-bold">
-                <span className="material-symbols-outlined text-[14px]">error</span>
-                <span>Surge Alert • Node B2</span>
-              </div>
-              <span className="font-body-sm text-body-sm text-on-surface">Inflow rate: 4.8 cit/min (Max cap: 2.2)</span>
-              <span className="font-label-code-sm text-label-code-sm text-tertiary">Estimated backlog buildup: +18m</span>
-            </div>
+            {/* Overlaid Zone HUD Telemetry Card for Selected Zone */}
+            {(() => {
+              const curZ = ZONES_CONFIG.find(z => z.id === selectedZone) || ZONES_CONFIG[1]
+              const isCrit = curZ.status === 'Critical'
+              return (
+                <div className={`absolute right-4 top-14 bg-surface-container-high/95 backdrop-blur-md p-space-sm rounded-lg shadow-xl max-w-xs flex flex-col gap-1 border transition-all ${
+                  isCrit ? 'border-error/40' : 'border-primary/40'
+                }`}>
+                  <div className={`flex items-center gap-1 font-label-caps text-label-caps uppercase font-bold ${
+                    isCrit ? 'text-error' : 'text-primary'
+                  }`}>
+                    <span className="material-symbols-outlined text-[14px]">{isCrit ? 'error' : 'info'}</span>
+                    <span>Zone {curZ.id} Status • {curZ.status.toUpperCase()}</span>
+                  </div>
+                  <span className="font-body-sm text-body-sm text-on-surface">Inflow rate: {curZ.inflow}</span>
+                  <span className={`font-label-code-sm text-label-code-sm ${isCrit ? 'text-tertiary' : 'text-secondary font-medium'}`}>
+                    {curZ.backlog}
+                  </span>
+                </div>
+              )
+            })()}
 
             {/* Bottom Controls and Coordinates */}
             <div className="absolute bottom-space-sm left-space-sm right-space-sm flex items-center justify-between text-on-surface-variant font-label-code-sm text-label-code-sm bg-surface-container-lowest/80 backdrop-blur px-space-sm py-1 rounded border border-outline-variant/20">
@@ -421,61 +519,51 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* 4-Zone Telemetry Breakdown Cards */}
+          {/* 4-Zone Telemetry Breakdown Cards (Interactive Zone Focus Selector) */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-space-sm">
-            {/* Zone A */}
-            <div className="bg-surface-container p-space-sm rounded-lg flex flex-col gap-1 hover:bg-surface-container-high transition-colors border border-outline-variant/10">
-              <div className="flex items-center justify-between">
-                <span className="font-label-caps text-label-caps uppercase text-on-surface-variant font-semibold">Zone A</span>
-                <span className="font-label-code-sm text-label-code-sm px-1.5 py-0.5 rounded bg-secondary/15 text-secondary font-medium">Optimal</span>
-              </div>
-              <span className="font-body-sm text-body-sm font-semibold text-on-surface truncate">Driver Licensing</span>
-              <div className="flex items-center justify-between text-on-surface-variant font-label-code-sm text-label-code-sm mt-1">
-                <span>24 Q'ing</span>
-                <span className="text-on-surface font-label-numeric-md text-label-numeric-md font-semibold">8m</span>
-              </div>
-            </div>
-
-            {/* Zone B */}
-            <div className="bg-surface-container p-space-sm rounded-lg flex flex-col gap-1 hover:bg-surface-container-high transition-colors border border-error/30">
-              <div className="flex items-center justify-between">
-                <span className="font-label-caps text-label-caps uppercase text-error font-bold">Zone B</span>
-                <span className="font-label-code-sm text-label-code-sm px-1.5 py-0.5 rounded bg-error/20 text-error flex items-center gap-1 font-semibold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span>Critical
-                </span>
-              </div>
-              <span className="font-body-sm text-body-sm font-semibold text-on-surface truncate">Vital Records & Permits</span>
-              <div className="flex items-center justify-between text-on-surface-variant font-label-code-sm text-label-code-sm mt-1">
-                <span className="text-tertiary font-semibold">68 Q'ing</span>
-                <span className="text-error font-label-numeric-md text-label-numeric-md font-bold">26m</span>
-              </div>
-            </div>
-
-            {/* Zone C */}
-            <div className="bg-surface-container p-space-sm rounded-lg flex flex-col gap-1 hover:bg-surface-container-high transition-colors border border-outline-variant/10">
-              <div className="flex items-center justify-between">
-                <span className="font-label-caps text-label-caps uppercase text-on-surface-variant font-semibold">Zone C</span>
-                <span className="font-label-code-sm text-label-code-sm px-1.5 py-0.5 rounded bg-secondary/15 text-secondary font-medium">Normal</span>
-              </div>
-              <span className="font-body-sm text-body-sm font-semibold text-on-surface truncate">Cashier & Fee Pay</span>
-              <div className="flex items-center justify-between text-on-surface-variant font-label-code-sm text-label-code-sm mt-1">
-                <span>18 Q'ing</span>
-                <span className="text-on-surface font-label-numeric-md text-label-numeric-md font-semibold">5m</span>
-              </div>
-            </div>
-
-            {/* Zone D */}
-            <div className="bg-surface-container p-space-sm rounded-lg flex flex-col gap-1 hover:bg-surface-container-high transition-colors border border-outline-variant/10">
-              <div className="flex items-center justify-between">
-                <span className="font-label-caps text-label-caps uppercase text-on-surface-variant font-semibold">Zone D</span>
-                <span className="font-label-code-sm text-label-code-sm px-1.5 py-0.5 rounded bg-secondary/15 text-secondary font-medium">Optimal</span>
-              </div>
-              <span className="font-body-sm text-body-sm font-semibold text-on-surface truncate">Express Intake Kiosks</span>
-              <div className="flex items-center justify-between text-on-surface-variant font-label-code-sm text-label-code-sm mt-1">
-                <span>32 Q'ing</span>
-                <span className="text-on-surface font-label-numeric-md text-label-numeric-md font-semibold">3m</span>
-              </div>
-            </div>
+            {ZONES_CONFIG.map(z => {
+              const isSelected = selectedZone === z.id
+              const isCritical = z.status === 'Critical'
+              return (
+                <button
+                  key={z.id}
+                  type="button"
+                  onClick={() => handleSelectZone(z)}
+                  className={`p-space-sm rounded-lg flex flex-col gap-1 transition-all text-left border cursor-pointer focus:outline-none ${
+                    isSelected
+                      ? isCritical
+                        ? 'bg-surface-container-high ring-2 ring-error shadow-lg border-error/80'
+                        : 'bg-surface-container-high ring-2 ring-primary shadow-lg border-primary'
+                      : isCritical
+                      ? 'bg-surface-container hover:bg-surface-container-high border-error/30'
+                      : 'bg-surface-container hover:bg-surface-container-high border-outline-variant/15'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className={`font-label-caps text-label-caps uppercase font-bold ${
+                      isCritical ? 'text-error' : isSelected ? 'text-primary' : 'text-on-surface-variant'
+                    }`}>
+                      Zone {z.id}
+                    </span>
+                    <span className={`font-label-code-sm text-label-code-sm px-1.5 py-0.5 rounded font-semibold ${
+                      isCritical
+                        ? 'bg-error/20 text-error flex items-center gap-1 animate-pulse'
+                        : 'bg-secondary/15 text-secondary'
+                    }`}>
+                      {isCritical && <span className="w-1.5 h-1.5 rounded-full bg-error"></span>}
+                      {z.status}
+                    </span>
+                  </div>
+                  <span className="font-body-sm text-body-sm font-semibold text-on-surface truncate">{z.name}</span>
+                  <div className="flex items-center justify-between text-on-surface-variant font-label-code-sm text-label-code-sm mt-1">
+                    <span className={isCritical ? 'text-tertiary font-semibold' : ''}>{z.queue} Q'ing</span>
+                    <span className={`font-label-numeric-md text-label-numeric-md font-bold ${
+                      isCritical ? 'text-error' : 'text-on-surface'
+                    }`}>{z.wait}</span>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </div>
 
@@ -487,7 +575,9 @@ export default function Dashboard() {
               <div>
                 <div className="flex items-center gap-space-xs">
                   <span className="material-symbols-outlined text-primary text-[18px]">timeline</span>
-                  <h2 className="font-headline-md text-headline-md text-on-surface">DL Wait-Time Projection</h2>
+                  <h2 className="font-headline-md text-headline-md text-on-surface">
+                    Wait-Time Projection • Zone {selectedZone} ({ZONES_CONFIG.find(z => z.id === selectedZone)?.name})
+                  </h2>
                 </div>
                 <span className="font-label-code-sm text-label-code-sm text-on-surface-variant">
                   -2h Actual vs +1h Transformer Forecast

@@ -3,7 +3,7 @@ Dashboard, Queue observations, and real-time monitoring API routes.
 """
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, desc
 from app.database.session import get_db
@@ -11,7 +11,7 @@ from app.models.operational import Department, Counter, Staff
 from app.models.queue import QueueObservation, QueueEvent, QueueTicket
 from app.core.dependencies import get_current_user
 from app.models.user import User
-from app.schemas.schemas import DashboardMetrics, QueueObservationOut
+from app.schemas.schemas import DashboardMetrics, QueueObservationOut, QueueEventCreate
 
 router = APIRouter(tags=["Dashboard & Queue"])
 
@@ -168,3 +168,31 @@ async def list_events(
         }
         for e in events
     ]
+
+@router.post("/queue/events", status_code=status.HTTP_201_CREATED)
+async def create_event(
+    payload: QueueEventCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    evt = QueueEvent(
+        department_id=payload.department_id,
+        counter_id=payload.counter_id,
+        event_type=payload.event_type,
+        timestamp=datetime.now(timezone.utc),
+        payload=payload.payload,
+        source=payload.source,
+    )
+    db.add(evt)
+    await db.flush()
+    await db.refresh(evt)
+    return {
+        "id": evt.id,
+        "event_type": evt.event_type,
+        "department_id": evt.department_id,
+        "counter_id": evt.counter_id,
+        "timestamp": evt.timestamp.isoformat(),
+        "payload": evt.payload,
+        "source": evt.source,
+    }
+

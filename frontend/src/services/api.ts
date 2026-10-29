@@ -51,6 +51,8 @@ export const dashboardApi = {
     api.get('/queue/observations', { params }),
   getEvents: (params?: { department_id?: number; hours?: number }) =>
     api.get('/queue/events', { params }),
+  createEvent: (data: { department_id?: number; counter_id?: number; event_type: string; payload?: any; source?: string }) =>
+    api.post('/queue/events', data),
 };
 
 // ─── Departments ──────────────────────────────────────────────────────────
@@ -189,7 +191,10 @@ export const cameraApi = {
   createSource: (data: any) => api.post('/camera/sources', data),
   updateSource: (id: number, data: any) => api.patch(`/camera/sources/${id}`, data),
   stepFrame: (id: number) => api.post(`/camera/sources/${id}/step`),
-  snapshotUrl: (id: number) => `${BASE_URL}/camera/sources/${id}/snapshot?t=${Date.now()}`,
+  snapshotUrl: (id: number) => {
+    const token = localStorage.getItem('qsense_token');
+    return `${BASE_URL}/camera/sources/${id}/snapshot?t=${Date.now()}${token ? `&token=${token}` : ''}`;
+  },
 };
 
 // ─── Audit ────────────────────────────────────────────────────────────────

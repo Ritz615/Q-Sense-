@@ -173,6 +173,27 @@ class QueueObservationOut(BaseModel):
 
 # ─── Dashboard ───────────────────────────────────────────────────────────────
 
+class QueueEventCreate(BaseModel):
+    department_id: Optional[int] = None
+    counter_id: Optional[int] = None
+    event_type: str
+    payload: Optional[dict] = None
+    source: str = "operator_workstation"
+
+
+class QueueEventOut(BaseModel):
+    id: int
+    department_id: Optional[int] = None
+    counter_id: Optional[int] = None
+    event_type: str
+    timestamp: datetime
+    payload: Optional[dict] = None
+    source: str
+
+    class Config:
+        from_attributes = True
+
+
 class DashboardMetrics(BaseModel):
     total_queue: int
     active_counters: int

@@ -1,4 +1,5 @@
-# Q-Sense: Research Methodology, Mathematical Formulation, and Experimental Evaluation
+3
+3# Q-Sense: Research Methodology, Mathematical Formulation, and Experimental Evaluation
 
 **A Deep Learning and Optimization-Based Intelligent Decision Support System for Queue Prediction and Dynamic Resource Allocation in Government Document-Verification Offices**
 
