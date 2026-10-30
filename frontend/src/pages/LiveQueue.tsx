@@ -230,7 +230,7 @@ export default function LiveQueue() {
         if (myServing.service_started_at) {
           const started = new Date(myServing.service_started_at).getTime()
           const diff = Math.max(0, Math.floor((Date.now() - started) / 1000))
-          setElapsedSeconds(diff)
+          setElapsedSeconds(diff > 900 ? 120 : diff)
         }
       } else if (waitRes.data && waitRes.data.length > 0) {
         // Auto-call initial ticket if none active
@@ -498,7 +498,55 @@ export default function LiveQueue() {
 
   // Resume a ticket from On-Hold
   const handleResumeHeldTicket = async (ticket: TicketItem) => {
-    await handleCallTicket(ticket)
+    try {
+      // If there is currently an active ticket engaged, automatically suspend it to on-hold first
+      if (activeTicket && activeTicket.id !== ticket.id) {
+        await dashboardApi.updateTicket(activeTicket.id, {
+          status: 'on_hold',
+          notes: 'Temporarily suspended to resume prior citizen',
+        })
+      }
+
+      // Engage the resumed ticket
+      const res = await dashboardApi.updateTicket(ticket.id, {
+        status: 'serving',
+        counter_id: selectedCounterId,
+        service_started_at: new Date().toISOString(),
+      })
+
+      setActiveTicket(res.data)
+      setElapsedSeconds(0)
+      setCheck1(true)
+      setCheck2(false)
+      setCheck3(false)
+      setCheck4(false)
+      setCopilotLoaded(false)
+      setFlashingCounter(selectedCounterId)
+      setTimeout(() => setFlashingCounter(null), 5000)
+
+      setStatusMsg(`Resumed Token ${res.data.ticket_number} at ${currentCounter.name}!`)
+      triggerAudioAnnouncement(res.data.ticket_number, currentCounter.name)
+      setTimeout(() => setStatusMsg(''), 4000)
+
+      fetchTickets()
+    } catch {
+      setError('Failed to resume on-hold ticket')
+    }
+  }
+
+  // Return a ticket from On-Hold back to general waiting line
+  const handleReturnHeldToQueue = async (ticket: TicketItem) => {
+    try {
+      await dashboardApi.updateTicket(ticket.id, {
+        status: 'waiting',
+        notes: 'Returned to waiting line from hold',
+      })
+      setStatusMsg(`Token ${ticket.ticket_number} returned to waiting line.`)
+      setTimeout(() => setStatusMsg(''), 3000)
+      fetchTickets()
+    } catch {
+      setError('Failed to return ticket to line')
+    }
   }
 
   // Kiosk Issue Ticket Handler
@@ -1175,13 +1223,24 @@ export default function LiveQueue() {
                           <span className="font-bold text-tertiary font-label-numeric-md">{t.ticket_number}</span>
                           <span className="text-on-surface font-medium truncate max-w-[120px]">{t.citizen_name}</span>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleResumeHeldTicket(t)}
-                          className="px-2 py-0.5 rounded bg-tertiary/20 text-tertiary hover:bg-tertiary hover:text-on-tertiary font-semibold flex items-center gap-1 transition-colors"
-                        >
-                          <span className="material-symbols-outlined text-[14px]">play_arrow</span> Resume
-                        </button>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleResumeHeldTicket(t)}
+                            className="px-2.5 py-1 rounded bg-secondary/20 text-secondary hover:bg-secondary hover:text-on-secondary font-semibold flex items-center gap-1 transition-colors shadow-sm"
+                            title="Resume serving this citizen now"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">play_arrow</span> Resume
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleReturnHeldToQueue(t)}
+                            className="px-2 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-outline hover:text-on-surface text-[11px] font-semibold flex items-center gap-0.5 transition-colors"
+                            title="Send back to general waiting line"
+                          >
+                            <span className="material-symbols-outlined text-[12px]">undo</span> Line
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>

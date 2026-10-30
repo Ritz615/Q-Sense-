@@ -315,6 +315,16 @@ async def create_ticket(
     return ticket
 
 
+
+def safe_duration_seconds(dt_end: datetime, dt_start: Optional[datetime]) -> Optional[float]:
+    if not dt_start:
+        return None
+    if dt_end.tzinfo is not None:
+        dt_end = dt_end.astimezone(timezone.utc).replace(tzinfo=None)
+    if dt_start.tzinfo is not None:
+        dt_start = dt_start.astimezone(timezone.utc).replace(tzinfo=None)
+    return max(0.0, (dt_end - dt_start).total_seconds())
+
 @router.post('/queue/tickets/call-next', response_model=Optional[QueueTicketOut])
 async def call_next_ticket(
     payload: QueueCallNextRequest,
@@ -335,7 +345,7 @@ async def call_next_ticket(
         current_serving.status = 'completed'
         current_serving.service_completed_at = now
         if current_serving.service_started_at:
-            current_serving.service_time_seconds = (now - current_serving.service_started_at).total_seconds()
+            current_serving.service_time_seconds = safe_duration_seconds(now, current_serving.service_started_at)
 
     # Find next waiting ticket (special priorities first, then arrival time)
     q = select(QueueTicket).where(QueueTicket.status == 'waiting')
@@ -358,7 +368,7 @@ async def call_next_ticket(
     next_ticket.status = 'serving'
     next_ticket.counter_id = payload.counter_id
     next_ticket.service_started_at = now
-    next_ticket.waiting_time_seconds = (now - next_ticket.arrived_at).total_seconds()
+    next_ticket.waiting_time_seconds = safe_duration_seconds(now, next_ticket.arrived_at)
 
     # Log service start event
     evt = QueueEvent(
@@ -396,7 +406,7 @@ async def update_ticket(
         if new_status == 'completed':
             ticket.service_completed_at = now
             if ticket.service_started_at:
-                ticket.service_time_seconds = (now - ticket.service_started_at).total_seconds()
+                ticket.service_time_seconds = safe_duration_seconds(now, ticket.service_started_at)
             db.add(QueueEvent(
                 department_id=ticket.department_id,
                 counter_id=ticket.counter_id,
@@ -406,14 +416,17 @@ async def update_ticket(
                 source='operator_workstation'
             ))
         elif new_status == 'on_hold':
+            ticket.counter_id = None
             db.add(QueueEvent(
                 department_id=ticket.department_id,
-                counter_id=ticket.counter_id,
+                counter_id=None,
                 event_type='hold',
                 timestamp=now,
                 payload={'ticket': ticket.ticket_number},
                 source='operator_workstation'
             ))
+        elif new_status == 'serving':
+            ticket.service_started_at = now
         elif new_status == 'abandoned':
             db.add(QueueEvent(
                 department_id=ticket.department_id,
