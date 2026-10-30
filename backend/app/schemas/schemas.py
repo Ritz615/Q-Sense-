@@ -194,6 +194,57 @@ class QueueEventOut(BaseModel):
         from_attributes = True
 
 
+
+
+class QueueTicketCreate(BaseModel):
+    department_id: int
+    service_type_id: Optional[int] = None
+    service_name: Optional[str] = 'Standard Service'
+    citizen_name: Optional[str] = 'Citizen'
+    priority: Optional[str] = 'normal'
+    notes: Optional[str] = None
+    source: Optional[str] = 'kiosk'
+
+
+class QueueTicketUpdate(BaseModel):
+    status: Optional[str] = None
+    counter_id: Optional[int] = None
+    citizen_name: Optional[str] = None
+    notes: Optional[str] = None
+    priority: Optional[str] = None
+    service_started_at: Optional[datetime] = None
+    service_completed_at: Optional[datetime] = None
+    waiting_time_seconds: Optional[float] = None
+    service_time_seconds: Optional[float] = None
+
+
+class QueueCallNextRequest(BaseModel):
+    counter_id: int
+    department_id: Optional[int] = None
+
+
+class QueueTicketOut(BaseModel):
+    id: int
+    ticket_number: str
+    department_id: int
+    service_type_id: Optional[int] = None
+    service_name: Optional[str] = None
+    counter_id: Optional[int] = None
+    citizen_name: Optional[str] = None
+    priority: Optional[str] = None
+    notes: Optional[str] = None
+    status: str
+    arrived_at: datetime
+    service_started_at: Optional[datetime] = None
+    service_completed_at: Optional[datetime] = None
+    waiting_time_seconds: Optional[float] = None
+    service_time_seconds: Optional[float] = None
+    source: str
+
+    class Config:
+        from_attributes = True
+
+
 class DashboardMetrics(BaseModel):
     total_queue: int
     active_counters: int

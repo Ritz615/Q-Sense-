@@ -53,6 +53,16 @@ export const dashboardApi = {
     api.get('/queue/events', { params }),
   createEvent: (data: { department_id?: number; counter_id?: number; event_type: string; payload?: any; source?: string }) =>
     api.post('/queue/events', data),
+  listTickets: (params?: { department_id?: number; counter_id?: number; status?: string; limit?: number }) =>
+    api.get('/queue/tickets', { params }),
+  createTicket: (data: { department_id: number; service_type_id?: number; service_name?: string; citizen_name?: string; priority?: string; notes?: string; source?: string }) =>
+    api.post('/queue/tickets', data),
+  callNextTicket: (data: { counter_id: number; department_id?: number }) =>
+    api.post('/queue/tickets/call-next', data),
+  updateTicket: (ticketId: number, data: any) =>
+    api.patch(`/queue/tickets/${ticketId}`, data),
+  getPublicBoard: () =>
+    api.get('/queue/public-board'),
 };
 
 // ─── Departments ──────────────────────────────────────────────────────────
@@ -118,7 +128,7 @@ export const optimizationApi = {
   }) => api.post('/optimization/recommend', data),
   listRecommendations: (params?: { department_id?: number; status?: string }) =>
     api.get('/optimization/recommendations', { params }),
-  reviewRecommendation: (id: number, data: { status: 'approved' | 'rejected'; notes?: string }) =>
+  reviewRecommendation: (id: number, data: { status: 'approved' | 'rejected'; notes?: string; source?: string }) =>
     api.patch(`/optimization/recommendations/${id}/review`, data),
 };
 

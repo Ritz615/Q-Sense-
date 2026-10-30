@@ -37,7 +37,11 @@ class QueueTicket(Base):
     department_id: Mapped[int] = mapped_column(ForeignKey("departments.id"), nullable=False)
     service_type_id: Mapped[Optional[int]] = mapped_column(ForeignKey("service_types.id"), nullable=True)
     counter_id: Mapped[Optional[int]] = mapped_column(ForeignKey("counters.id"), nullable=True)
-    status: Mapped[str] = mapped_column(String(32), default="waiting")  # waiting, serving, completed, abandoned
+    status: Mapped[str] = mapped_column(String(32), default="waiting")  # waiting, serving, completed, abandoned, on_hold
+    citizen_name: Mapped[Optional[str]] = mapped_column(String(128), default="Citizen")
+    priority: Mapped[Optional[str]] = mapped_column(String(32), default="normal")  # normal, special, fast_track, vip
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    service_name: Mapped[Optional[str]] = mapped_column(String(128), default="Standard Service")
     arrived_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     service_started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     service_completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
